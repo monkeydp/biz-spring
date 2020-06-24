@@ -30,6 +30,10 @@ dependencies {
     api("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
 
     api("com.ibm.icu:icu4j:67.1")
+
+    api("commons-codec:commons-codec")
+
+    api("com.github.javafaker:javafaker:1.0.2")
 }
 
 tasks {
