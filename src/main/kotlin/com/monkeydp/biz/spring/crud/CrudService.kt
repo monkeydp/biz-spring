@@ -1,5 +1,7 @@
-package com.monkeydp.biz.spring
+package com.monkeydp.biz.spring.crud
 
+import com.monkeydp.biz.spring.ex.BizEx
+import com.monkeydp.biz.spring.result.ResultInfo
 import com.monkeydp.tools.ext.kotlin.singleton
 import com.monkeydp.tools.util.TypeUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +13,7 @@ import org.springframework.data.repository.NoRepositoryBean
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 
-interface CrudService<E : Any, ID : Any> {
+interface CrudService<E, ID> {
 
     fun save(entity: E): E
 
@@ -46,7 +48,7 @@ interface CrudService<E : Any, ID : Any> {
     fun has(spec: () -> Specification<E>): Boolean
 }
 
-abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : CrudService<E, ID> {
+abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudService<E, ID> {
 
     @set:Autowired
     private var repo: R by Delegates.singleton()
@@ -58,33 +60,33 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
     override fun saveAll(entities: Iterable<E>) = repo.saveAll(entities)
 
     override fun find(spec: Specification<E>): E =
-        repo.findOne(spec)
-            .orElseThrow { throw buildDataNotFoundEx(entityClass) }
+            repo.findOne(spec)
+                    .orElseThrow { throw buildDataNotFoundEx(entityClass) }
 
     override fun findOrNull(spec: Specification<E>): E? =
-        repo.findOne(spec)
-            .orElse(null)
+            repo.findOne(spec)
+                    .orElse(null)
 
     override fun findById(id: ID): E =
-        repo.findById(id)
-            .orElseThrow { throw buildDataNotFoundEx(entityClass) }
+            repo.findById(id)
+                    .orElseThrow { throw buildDataNotFoundEx(entityClass) }
 
     override fun findByIdOrNull(id: ID): E? =
-        repo.findById(id)
-            .orElse(null)
+            repo.findById(id)
+                    .orElse(null)
 
     override fun findAll(): List<E> = repo.findAll()
 
     override fun findAll(spec: Specification<E>): List<E> =
-        repo.findAll(spec)
+            repo.findAll(spec)
 
     override fun findAll(pagingQuery: PagingQuery): Paging<E> =
-        repo.findAll(pagingQuery.pageable)
-            .run(::Paging)
+            repo.findAll(pagingQuery.pageable)
+                    .run(::Paging)
 
     override fun findAll(spec: Specification<E>, pagingQuery: PagingQuery): Paging<E> =
-        repo.findAll(spec, pagingQuery.pageable)
-            .run(::Paging)
+            repo.findAll(spec, pagingQuery.pageable)
+                    .run(::Paging)
 
     override fun delete(entity: E) = repo.delete(entity)
 
@@ -103,18 +105,18 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
     }
 
     override fun count(): Long =
-        repo.count()
+            repo.count()
 
     override fun has(spec: Specification<E>) =
-        findOrNull(spec) != null
+            findOrNull(spec) != null
 
     override fun has(spec: () -> Specification<E>): Boolean =
-        has(spec())
+            has(spec())
 
-    abstract class DataNotFoundEx : Throwable()
+    abstract class DataNotFoundEx(info: ResultInfo<*>, cause: Throwable? = null) : BizEx(info, cause)
 
     abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*>): DataNotFoundEx
 }
 
 @NoRepositoryBean
-interface CrudRepo<E : Any, ID : Any> : JpaRepository<E, ID>, JpaSpecificationExecutor<E>
+interface CrudRepo<E, ID> : JpaRepository<E, ID>, JpaSpecificationExecutor<E>

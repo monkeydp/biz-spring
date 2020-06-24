@@ -21,6 +21,7 @@ dependencies {
     api("org.hibernate:hibernate-core:5.4.15.Final")
     api("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
 
+    api("com.ibm.icu:icu4j:67.1")
 }
 
 tasks {

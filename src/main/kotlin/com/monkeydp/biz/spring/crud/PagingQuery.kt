@@ -1,5 +1,6 @@
-package com.monkeydp.biz.spring
+package com.monkeydp.biz.spring.crud
 
+import com.monkeydp.biz.spring.entity.Entity
 import com.monkeydp.tools.ext.javax.validation.CarrierConstraint
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable

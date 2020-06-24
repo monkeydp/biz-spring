@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring
+package com.monkeydp.biz.spring.crud
 
 import com.monkeydp.tools.ext.jackson.JsonFlatten
 import com.monkeydp.tools.ext.jackson.JsonFlatten.Times.TWO
@@ -45,12 +45,12 @@ data class Paging<T>(
     )
 
     fun <T> clone(data: List<T>): Paging<T> =
-        Paging<T>(
-            currentPage = currentPage,
-            pageSize = pageSize,
-            total = total,
-            pageCount = pageCount,
-            rows = rows,
-            content = data
-        )
+            Paging<T>(
+                    currentPage = currentPage,
+                    pageSize = pageSize,
+                    total = total,
+                    pageCount = pageCount,
+                    rows = rows,
+                    content = data
+            )
 }

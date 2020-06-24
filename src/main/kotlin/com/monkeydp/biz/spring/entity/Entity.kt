@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring
+package com.monkeydp.biz.spring.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.monkeydp.tools.ext.kotlin.toJson
