@@ -15,7 +15,12 @@ dependencies {
     api(kotlin("reflect"))
     api(kotlin("stdlib-jdk8"))
 
+    api("com.monkeydp:tools:1.1.+")
+
+    api("jakarta.persistence:jakarta.persistence-api:2.2.3")
+    api("org.hibernate:hibernate-core:5.4.15.Final")
     api("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
+
 }
 
 tasks {
