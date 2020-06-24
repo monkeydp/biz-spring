@@ -43,7 +43,7 @@ class DefaultFailedResult(
     }
 }
 
-class BusinessFailedResult(
+class BizFailedResult(
         bizEx: BizEx
 ) : AbstractFailResult(bizEx, bizEx.info) {
     companion object {
@@ -57,7 +57,7 @@ class BusinessFailedResult(
 
 class ArgsIllegalFailedResult(
         ex: Exception,
-        bindingResult: BindingResult
+        bindingResult: BindingResult?
 ) : AbstractFailResult(ex, ARGUMENT_ILLEGAL) {
     companion object {
         private val logger = getLogger()
@@ -68,7 +68,7 @@ class ArgsIllegalFailedResult(
     }
 
     val validErrors: List<ValidError> =
-            bindingResult.run {
+            bindingResult?.run {
                 allErrors
                         .filterIsInstance<FieldError>()
                         .apply { if (allErrors.size != size) ierror("存在未处理参数验证错误类型!") }
@@ -81,7 +81,7 @@ class ArgsIllegalFailedResult(
                                     illegalValue = it.rejectedValue?.toString() ?: "<unknown>"
                             )
                         }
-            }
+            }.orEmpty()
 }
 
 
