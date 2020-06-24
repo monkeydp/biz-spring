@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring.common
+package com.monkeydp.biz.spring.global
 
 /**
  * 通用视图

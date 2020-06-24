@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring.common
+package com.monkeydp.biz.spring.global
 
 import com.monkeydp.tools.ext.javax.validation.CarrierConstraint
 import javax.validation.Constraint

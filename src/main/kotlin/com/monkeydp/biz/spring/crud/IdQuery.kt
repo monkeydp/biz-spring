@@ -1,6 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
-import com.monkeydp.biz.spring.common.IdCstr
+import com.monkeydp.biz.spring.global.IdCstr
 import io.swagger.annotations.ApiModel
 
 @ApiModel("ID 查询")
