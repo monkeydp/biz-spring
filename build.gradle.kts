@@ -20,7 +20,7 @@ dependencies {
     api(kotlin("reflect"))
     api(kotlin("stdlib-jdk8"))
 
-    api("com.monkeydp:tools:1.1.+")
+    api("com.monkeydp:tools:1.1.0.RELEASE")
 
     api("org.springframework:spring-messaging:$springVersion")
     api("org.springframework:spring-webmvc:$springVersion")
