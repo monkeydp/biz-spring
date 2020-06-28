@@ -25,7 +25,7 @@ data class PagingQuery(
         const val DEFAULT_CURRENT_PAGE = 1
         const val DEFAULT_PAGE_SIZE = 10
         final val DEFAULT_SORT =
-                Sort.by(Entity::createdAt.name)
+                Sort.by(Entity<*>::createdAt.name)
                         .descending()
     }
 
