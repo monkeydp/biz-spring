@@ -31,6 +31,8 @@ dependencies {
     api("commons-codec:commons-codec:1.13")
 
     api("com.github.javafaker:javafaker:1.0.2")
+
+    api("io.springfox:springfox-core:2.9.2")
 }
 
 tasks {
