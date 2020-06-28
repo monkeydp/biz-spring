@@ -2,25 +2,35 @@ package com.monkeydp.biz.spring.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.monkeydp.tools.ext.kotlin.toJson
+import com.monkeydp.tools.ext.kotlin.toPropValues
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.hibernate.collection.internal.PersistentBag
+import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.MappedSuperclass
 
-interface Entity {
+interface Entity<E : Entity<E>> {
     var createdAt: Date
     var updatedAt: Date
 
+    fun asChild(): E
+
     /**
-     * 是否和另一个实体相同
+     * 完整信息 (因为有 lazy load)
      */
-    fun <E : Entity> isSameAs(another: E): Boolean
+    fun full(): E
+
+    /**
+     * 是否和另一个实体相同 (包含关联实体)
+     */
+    fun isFullSameAs(another: E): Boolean
 }
 
 @MappedSuperclass
-abstract class AbstractEntity : Entity, Serializable {
+abstract class AbstractEntity<E : AbstractEntity<E>> : Entity<E>, Serializable {
 
     companion object {
         const val INVALID_ID = -1L
@@ -36,6 +46,22 @@ abstract class AbstractEntity : Entity, Serializable {
     @Column(nullable = false)
     override lateinit var updatedAt: Date
 
-    override fun <E : Entity> isSameAs(another: E): Boolean =
-        toJson() == another.toJson()
+    @Suppress("UNCHECKED_CAST")
+    override fun asChild(): E =
+            this as E
+
+    override fun isFullSameAs(another: E): Boolean =
+            full().toJson() == another.full().toJson()
+
+    /**
+     * @see Transactional 如果有 lazy load, 记得使用 @Transactional
+     */
+    override fun full(): E =
+            run {
+                toPropValues().forEach {
+                    if (it is PersistentBag)
+                        it.size
+                }
+                asChild()
+            }
 }
