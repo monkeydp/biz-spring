@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.monkeydp.biz"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0.RELEASE"
 java.sourceCompatibility = VERSION_1_8
 
 val springVersion = "5.2.6.RELEASE"
