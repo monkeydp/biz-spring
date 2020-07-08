@@ -2,6 +2,7 @@ package com.monkeydp.biz.spring.http
 
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.ExHandler
+import com.monkeydp.biz.spring.result.Result
 import com.monkeydp.biz.spring.result.SuccessResult
 import com.monkeydp.tools.ext.kotlin.toJson
 import org.springframework.core.MethodParameter
@@ -23,12 +24,21 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
 
     override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
 
-    override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? =
-            SuccessResult(data = body).run {
-                if (body is String)
-                    this.toJson()
-                else this
-            }
+    override fun beforeBodyWrite(
+            body: Any?,
+            returnType: MethodParameter,
+            selectedContentType: MediaType,
+            selectedConverterType: Class<out HttpMessageConverter<*>>,
+            request: ServerHttpRequest,
+            response: ServerHttpResponse
+    ): Any? =
+            if (body is Result) body
+            else
+                SuccessResult(data = body).run {
+                    if (body is String)
+                        this.toJson() as Any
+                    else this
+                }
 
     @ResponseBody
     @ExceptionHandler(Exception::class)
