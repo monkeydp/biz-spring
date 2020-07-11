@@ -19,6 +19,11 @@ import org.springframework.validation.FieldError
 interface FailResult : Result {
     override val code: String
     var msg: String
+
+    companion object {
+        operator fun invoke(code: String, msg: String): FailResult =
+                StdFailedResult(code = code, msg = msg)
+    }
 }
 
 abstract class AbstractFailResult(
@@ -29,17 +34,22 @@ abstract class AbstractFailResult(
             this(resultInfo.code.toString(), ex.message ?: "")
 }
 
-class DefaultFailedResult(
-        ex: Exception,
-        resultInfo: ResultInfo<*>
-) : AbstractFailResult(ex, resultInfo) {
+class StdFailedResult : AbstractFailResult {
+
+    constructor (
+            code: String,
+            msg: String
+    ) : super(code, msg)
+
+    constructor (
+            ex: Exception,
+            resultInfo: ResultInfo<*>
+    ) : super(ex, resultInfo) {
+        logger.error(ex)
+    }
 
     companion object {
         private val logger = getLogger()
-    }
-
-    init {
-        logger.error(ex)
     }
 }
 

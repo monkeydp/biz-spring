@@ -2,6 +2,7 @@ package com.monkeydp.biz.spring.http
 
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.ExHandler
+import com.monkeydp.biz.spring.result.FailEx
 import com.monkeydp.biz.spring.result.Result
 import com.monkeydp.biz.spring.result.SuccessResult
 import com.monkeydp.tools.ext.kotlin.toJson
@@ -58,5 +59,10 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException::class)
     open fun handle(ex: MethodArgumentNotValidException) =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(FailEx::class)
+    open fun handle(ex: FailEx) =
             ExHandler.handle(ex)
 }
