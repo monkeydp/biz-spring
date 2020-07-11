@@ -16,3 +16,11 @@ interface Result {
 }
 
 abstract class AbstractResult : Result
+
+class StdResult<T>(
+        override val code: String,
+        // exist when success
+        val data: T? = null,
+        // exist when fail
+        val msg: String? = null
+) : AbstractResult()
