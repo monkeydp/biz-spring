@@ -23,6 +23,9 @@ interface FailResult : Result {
     companion object {
         operator fun invoke(code: String, msg: String): FailResult =
                 StdFailedResult(code = code, msg = msg)
+
+        operator fun invoke(code: Any, msg: String): FailResult =
+                invoke(code.toString(), msg)
     }
 }
 

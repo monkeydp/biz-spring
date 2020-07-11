@@ -6,6 +6,5 @@ package com.monkeydp.biz.spring.result
  */
 class FailEx(val result: FailResult) : RuntimeException()
 
-fun failerr(result: FailResult) {
-    throw FailEx(result)
-}
+fun failerr(result: FailResult): Nothing =
+        throw FailEx(result)
