@@ -10,18 +10,18 @@ import org.springframework.validation.BindException
  * @date 2020/6/11
  */
 object ExHandler {
-    fun handle(ex: Exception): FailResult =
+    fun handle(ex: Exception) =
             StdFailedResult(ex, INNER_ERROR)
 
-    fun handle(ex: BizEx): FailResult =
+    fun handle(ex: BizEx) =
             BizFailedResult(ex)
 
-    fun handle(ex: BindException): FailResult =
+    fun handle(ex: BindException) =
             ArgsIllegalFailedResult(ex, ex.bindingResult)
 
-    fun handle(ex: MethodArgumentNotValidException): FailResult =
+    fun handle(ex: MethodArgumentNotValidException) =
             ArgsIllegalFailedResult(ex, ex.bindingResult)
 
-    fun handle(ex: FailEx): FailResult =
+    fun handle(ex: FailEx) =
             ex.result
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
  * @author iPotato-Work
  * @date 2020/5/15
  */
-@JsonPropertyOrder("code", "data")
 interface SuccessResult<T> : Result {
     override val code: String get() = SUCCESS_CODE
     val data: T
@@ -18,6 +17,7 @@ interface SuccessResult<T> : Result {
     }
 }
 
+@JsonPropertyOrder("code", "data")
 abstract class AbstractSuccessResult<T>(
         override val data: T
 ) : SuccessResult<T>, AbstractResult()

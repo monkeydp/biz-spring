@@ -15,7 +15,6 @@ import org.springframework.validation.FieldError
  * @author iPotato-Work
  * @date 2020/5/15
  */
-@JsonPropertyOrder("code", "msg")
 interface FailResult : Result {
     override val code: String
     var msg: String
@@ -29,6 +28,7 @@ interface FailResult : Result {
     }
 }
 
+@JsonPropertyOrder("code", "msg")
 abstract class AbstractFailResult(
         override val code: String,
         override var msg: String
