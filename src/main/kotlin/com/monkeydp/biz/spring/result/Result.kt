@@ -1,11 +1,6 @@
 package com.monkeydp.biz.spring.result
 
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.monkeydp.biz.spring.result.SuccessResult.Companion.SUCCESS_CODE
-import com.monkeydp.tools.exception.ierror
-import com.monkeydp.tools.ext.jackson.removeAllKeys
-import com.monkeydp.tools.ext.kotlin.convertValue
 import com.monkeydp.tools.ext.kotlin.singleton
 import kotlin.properties.Delegates
 
@@ -15,8 +10,6 @@ import kotlin.properties.Delegates
  */
 interface Result {
     val code: String
-    fun toArrayNodeWithoutAllKeys(): ArrayNode =
-            convertValue<ObjectNode>().removeAllKeys()
 }
 
 abstract class AbstractResult : Result
@@ -39,6 +32,6 @@ class StdResult<T : Any>(
             SuccessResult.invoke(data)
 
     val failedResult: FailResult
-        get()  =
+        get() =
             FailResult(code, msg)
 }
