@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.monkeydp.tools.config.ToolsKodeinModuleContainer
 import com.monkeydp.tools.ext.kotlin.singleton
 import org.kodein.di.generic.bind
@@ -24,13 +25,10 @@ abstract class BaseJacksonConfig : InitializingBean {
     @set:Autowired
     private var builder: Jackson2ObjectMapperBuilder by Delegates.singleton()
 
-    /**
-     * Auto register module jackson-module-kotlin,
-     * it's the module that adds support for serialization/deserialization of Kotlin classes and data classes.
-     */
     @Bean
     open fun objectMapper(): ObjectMapper =
             builder.build<ObjectMapper>()
+                    .registerKotlinModule()
                     .registerModule(Hibernate5Module())
 
     @Bean
