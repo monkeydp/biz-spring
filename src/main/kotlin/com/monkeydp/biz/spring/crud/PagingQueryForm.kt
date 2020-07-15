@@ -1,5 +1,7 @@
 package com.monkeydp.biz.spring.crud
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_CURRENT_PAGE
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_PAGE_SIZE
 import io.swagger.annotations.ApiModel
@@ -10,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification
  * @author iPotato
  * @date 2020/4/27
  */
+@JsonDeserialize(`as` = StdPagingQueryForm::class)
 @ApiModel("分页查询")
 interface PagingQueryForm {
     val currentPage: Int
@@ -21,6 +24,12 @@ interface PagingQueryForm {
                 currentPage: Int,
                 pageSize: Int
         ): PagingQueryForm = StdPagingQueryForm(currentPage, pageSize)
+    }
+
+    class FormTypeResolverBuilder : StdTypeResolverBuilder() {
+        override fun defaultImpl(defaultImpl: Class<*>?): StdTypeResolverBuilder {
+            return super.defaultImpl(defaultImpl)
+        }
     }
 }
 
