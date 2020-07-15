@@ -11,27 +11,53 @@ import javax.validation.constraints.Positive
 import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.reflect.KClass
 
+interface PagingQuery {
+    val currentPage: Int
+    val pageSize: Int
+    val sort: Sort
+    val pageable: Pageable
 
-data class PagingQuery(
-        @CurrentPageCstr
-        val currentPage: Int = DEFAULT_CURRENT_PAGE,
-
-        @PageSizeCstr
-        val pageSize: Int = DEFAULT_PAGE_SIZE,
-
-        val sort: Sort = DEFAULT_SORT
-) {
     companion object {
         const val DEFAULT_CURRENT_PAGE = 1
         const val DEFAULT_PAGE_SIZE = 10
-        final val DEFAULT_SORT =
+        val DEFAULT_SORT =
                 Sort.by(Entity<*>::createdAt.name)
                         .descending()
-    }
 
-    val pageable: Pageable
+        operator fun invoke(
+                currentPage: Int = DEFAULT_CURRENT_PAGE,
+                pageSize: Int = DEFAULT_PAGE_SIZE,
+                sort: Sort = DEFAULT_SORT
+        ): PagingQuery =
+                StdPagingQuery(
+                        currentPage = currentPage,
+                        pageSize = pageSize,
+                        sort = sort
+                )
+    }
+}
+
+abstract class BasePagingQuery(
+        @CurrentPageCstr
+        override val currentPage: Int,
+
+        @PageSizeCstr
+        override val pageSize: Int,
+
+        override val sort: Sort
+) : PagingQuery {
+
+
+    override val pageable: Pageable
         get() = PageRequest.of(currentPage - 1, pageSize, sort)
 }
+
+class StdPagingQuery(
+        currentPage: Int,
+        pageSize: Int,
+        sort: Sort
+) : BasePagingQuery(currentPage, pageSize, sort)
+
 
 @Positive
 @Target(FIELD)
