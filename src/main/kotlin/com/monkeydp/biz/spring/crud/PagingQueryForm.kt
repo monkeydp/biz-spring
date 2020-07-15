@@ -1,5 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_CURRENT_PAGE
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_PAGE_SIZE
 import io.swagger.annotations.ApiModel
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification
  * @author iPotato
  * @date 2020/4/27
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE, defaultImpl = StdPagingQueryForm::class)
 @ApiModel("分页查询")
 interface PagingQueryForm {
     val currentPage: Int
