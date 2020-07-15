@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty
  * @date 2020/4/27
  */
 @ApiModel("分页查询")
-data class PagingQueryForm(
+open class PagingQueryForm(
         @CurrentPageCstr
         @ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
         val currentPage: Int = DEFAULT_CURRENT_PAGE,
