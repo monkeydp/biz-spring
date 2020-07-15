@@ -3,6 +3,7 @@ package com.moonlight.sk.be.config
 import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.monkeydp.tools.config.ToolsKodeinModuleContainer
 import com.monkeydp.tools.ext.kotlin.singleton
 import org.kodein.di.generic.bind
@@ -29,7 +30,7 @@ abstract class BaseJacksonConfig : InitializingBean {
      */
     @Bean
     open fun objectMapper(): ObjectMapper =
-            builder.build<ObjectMapper>().configure(DEFAULT_VIEW_INCLUSION, true)
+            builder.build<ObjectMapper>()
                     .registerModule(Hibernate5Module())
 
     @Bean

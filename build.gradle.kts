@@ -26,6 +26,7 @@ dependencies {
     api("org.hibernate:hibernate-core:5.4.15.Final")
     api("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
     api("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.10.4")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     api("com.ibm.icu:icu4j:67.1")
 
