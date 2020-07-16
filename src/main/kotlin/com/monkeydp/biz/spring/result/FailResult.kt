@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.ARGUMENT_ILLEGAL
 import com.monkeydp.tools.exception.ierror
+import com.monkeydp.tools.ext.logger.debug
 import com.monkeydp.tools.ext.logger.error
 import com.monkeydp.tools.ext.logger.getLogger
-import com.monkeydp.tools.ext.logger.info
 import com.monkeydp.tools.ext.logger.log
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
@@ -39,32 +39,28 @@ abstract class AbstractFailResult(
         override val code: String,
         override var msg: String
 ) : FailResult, AbstractResult() {
-    constructor(ex: Exception, resultInfo: ResultInfo<*>) :
-            this(resultInfo.code.toString(), ex.message ?: "")
+    constructor(resultInfo: ResultInfo<*>) : this(resultInfo.code, resultInfo.msgPattern)
 }
 
-private class StdFailedResult : AbstractFailResult {
-
-    constructor (
-            code: String,
-            msg: String
-    ) : super(code, msg)
+private class StdFailedResult(
+        code: String,
+        msg: String
+) : AbstractFailResult(code, msg) {
+    companion object {
+        private val logger = getLogger()
+    }
 
     constructor (
             ex: Exception,
             resultInfo: ResultInfo<*>
-    ) : super(ex, resultInfo) {
+    ) : this(resultInfo.code, resultInfo.msgPattern) {
         logger.error(ex)
-    }
-
-    companion object {
-        private val logger = getLogger()
     }
 }
 
 class BizFailedResult(
         bizEx: BizEx
-) : AbstractFailResult(bizEx, bizEx.info) {
+) : AbstractFailResult(bizEx.info.code, bizEx.message) {
     companion object {
         private val logger = getLogger()
     }
@@ -77,13 +73,14 @@ class BizFailedResult(
 class ArgsIllegalFailedResult(
         ex: Exception,
         bindingResult: BindingResult?
-) : AbstractFailResult(ex, ARGUMENT_ILLEGAL) {
+) : AbstractFailResult(ARGUMENT_ILLEGAL) {
+
     companion object {
         private val logger = getLogger()
     }
 
     init {
-        logger.info(ex) { ARGUMENT_ILLEGAL.msgPattern }
+        logger.debug(ex)
     }
 
     val validErrors: List<ValidError> =
@@ -102,7 +99,6 @@ class ArgsIllegalFailedResult(
                         }
             }.orEmpty()
 }
-
 
 class ValidError(
         val message: String,

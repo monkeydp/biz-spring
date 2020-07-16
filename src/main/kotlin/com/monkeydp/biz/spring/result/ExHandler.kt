@@ -2,7 +2,7 @@ package com.monkeydp.biz.spring.result
 
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.validation.BindException
 
 /**
