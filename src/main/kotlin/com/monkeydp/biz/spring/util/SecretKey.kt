@@ -1,6 +1,6 @@
 package com.monkeydp.biz.spring.util
 
-import com.monkeydp.biz.spring.global.faker
+import com.monkeydp.tools.global.faker
 
 /**
  * @author iPotato-Work
