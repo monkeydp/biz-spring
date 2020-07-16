@@ -13,10 +13,6 @@ interface PasswordEncoder {
     companion object {
         operator fun invoke(): PasswordEncoder = StdPasswordEncoder()
     }
-
-    enum class Encryption {
-        SHA1, SHA256
-    }
 }
 
 private class StdPasswordEncoder : PasswordEncoder {
