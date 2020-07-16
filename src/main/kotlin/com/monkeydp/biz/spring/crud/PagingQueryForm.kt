@@ -25,12 +25,6 @@ interface PagingQueryForm {
                 pageSize: Int
         ): PagingQueryForm = StdPagingQueryForm(currentPage, pageSize)
     }
-
-    class FormTypeResolverBuilder : StdTypeResolverBuilder() {
-        override fun defaultImpl(defaultImpl: Class<*>?): StdTypeResolverBuilder {
-            return super.defaultImpl(defaultImpl)
-        }
-    }
 }
 
 abstract class BasePagingQueryForm(
@@ -49,7 +43,7 @@ abstract class BasePagingQueryForm(
             )
 }
 
-class StdPagingQueryForm(
+private class StdPagingQueryForm(
         currentPage: Int = DEFAULT_CURRENT_PAGE,
         pageSize: Int = DEFAULT_PAGE_SIZE
 ) : BasePagingQueryForm(currentPage, pageSize)

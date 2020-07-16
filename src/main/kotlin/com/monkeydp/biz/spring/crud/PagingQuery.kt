@@ -1,5 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.monkeydp.biz.spring.entity.Entity
 import com.monkeydp.tools.ext.javax.validation.CarrierConstraint
 import org.springframework.data.domain.PageRequest
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive
 import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.reflect.KClass
 
+@JsonDeserialize(`as` = StdPagingQuery::class)
 interface PagingQuery {
     val currentPage: Int
     val pageSize: Int
@@ -52,7 +54,7 @@ abstract class BasePagingQuery(
         get() = PageRequest.of(currentPage - 1, pageSize, sort)
 }
 
-class StdPagingQuery(
+private class StdPagingQuery(
         currentPage: Int,
         pageSize: Int,
         sort: Sort
