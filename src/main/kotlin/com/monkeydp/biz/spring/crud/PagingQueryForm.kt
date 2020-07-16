@@ -1,7 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_CURRENT_PAGE
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_PAGE_SIZE
 import io.swagger.annotations.ApiModel
@@ -15,7 +14,10 @@ import org.springframework.data.jpa.domain.Specification
 @JsonDeserialize(`as` = StdPagingQueryForm::class)
 @ApiModel("分页查询")
 interface PagingQueryForm {
+    @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
     val currentPage: Int
+
+    @get:ApiModelProperty("每页记录数", example = DEFAULT_PAGE_SIZE.toString())
     val pageSize: Int
     fun toPagingQuery(): PagingQuery
 
@@ -29,11 +31,9 @@ interface PagingQueryForm {
 
 abstract class BasePagingQueryForm(
         @CurrentPageCstr
-        @ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
         override val currentPage: Int = DEFAULT_CURRENT_PAGE,
 
         @PageSizeCstr
-        @ApiModelProperty("每页记录数", example = DEFAULT_PAGE_SIZE.toString())
         override val pageSize: Int = DEFAULT_PAGE_SIZE
 ) : PagingQueryForm {
     override fun toPagingQuery() =
