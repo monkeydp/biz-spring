@@ -11,7 +11,7 @@ import org.springframework.validation.BindException
  */
 object ExHandler {
     fun handle(ex: Exception) =
-            StdFailedResult(ex, INNER_ERROR)
+            FailResult(ex, INNER_ERROR)
 
     fun handle(ex: BizEx) =
             BizFailedResult(ex)

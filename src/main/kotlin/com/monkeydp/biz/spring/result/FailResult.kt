@@ -25,6 +25,12 @@ interface FailResult : Result {
 
         operator fun invoke(code: Any, msg: String): FailResult =
                 invoke(code.toString(), msg)
+
+        operator fun invoke(
+                ex: Exception,
+                resultInfo: ResultInfo<*>
+        ): FailResult =
+                StdFailedResult(ex = ex, resultInfo = resultInfo)
     }
 }
 
@@ -37,7 +43,7 @@ abstract class AbstractFailResult(
             this(resultInfo.code.toString(), ex.message ?: "")
 }
 
-class StdFailedResult : AbstractFailResult {
+private class StdFailedResult : AbstractFailResult {
 
     constructor (
             code: String,
