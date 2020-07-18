@@ -2,7 +2,7 @@ package com.monkeydp.biz.spring.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.monkeydp.tools.ext.kotlin.toJson
-import com.monkeydp.tools.ext.kotlin.toPropValues
+import com.monkeydp.tools.ext.kotlin.toMemberPropValues
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.collection.internal.PersistentBag
@@ -58,7 +58,7 @@ abstract class AbstractEntity<E : AbstractEntity<E>> : Entity<E>, Serializable {
      */
     override fun full(): E =
             run {
-                toPropValues().forEach {
+                toMemberPropValues().forEach {
                     if (it is PersistentBag)
                         it.size
                 }
