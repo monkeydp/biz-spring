@@ -36,12 +36,10 @@ abstract class AbstractEntity<E : AbstractEntity<E>> : Entity<E>, Serializable {
         const val INVALID_ID = -1L
     }
 
-    @set:JsonIgnore
     @field:CreationTimestamp
     @Column(nullable = false, updatable = false)
     override lateinit var createdAt: Date
 
-    @set:JsonIgnore
     @field:UpdateTimestamp
     @Column(nullable = false)
     override lateinit var updatedAt: Date
