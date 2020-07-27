@@ -66,7 +66,7 @@ class BizFailedResult(
     }
 
     init {
-        logger.log(bizEx.logLevel, bizEx) { "业务异常" }
+        logger.log(bizEx.logLevel, "${bizEx.info.code} - ${bizEx.message}")
     }
 }
 
