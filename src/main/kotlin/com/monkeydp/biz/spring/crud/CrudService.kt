@@ -92,7 +92,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
 
     override fun deleteById(id: ID) {
         try {
-            repo.deleteById(id)
+            delete(findById(id))
         } catch (e: EmptyResultDataAccessException) {
             throw buildDataNotFoundEx(entityClass)
         }
@@ -108,7 +108,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
             repo.count()
 
     override fun has(spec: Specification<E>) =
-            findOrNull(spec) != null
+            findAll(spec).isNotEmpty()
 
     override fun has(spec: () -> Specification<E>): Boolean =
             has(spec())
