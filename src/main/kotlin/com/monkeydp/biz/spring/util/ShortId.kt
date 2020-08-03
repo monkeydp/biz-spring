@@ -1,7 +1,5 @@
 package com.monkeydp.biz.spring.util
 
-import com.monkeydp.tools.util.RandomUtil
-
 /**
  * Short unique id generator
  *
@@ -10,6 +8,11 @@ import com.monkeydp.tools.util.RandomUtil
  */
 interface ShortId {
     fun next(): String
+
+    companion object {
+        operator fun invoke(): ShortId =
+                StdShortId()
+    }
 }
 
 /**
@@ -18,11 +21,6 @@ interface ShortId {
  * https://github.com/dylang/shortid
  */
 private class StdShortId : ShortId {
-    override fun next(): String {
-        TODO("Not yet implemented")
-    }
-}
-
-class ShortIdFake : ShortId {
-    override fun next(): String = RandomUtil.randomAlphanumeric(8)
+    override fun next() =
+            me.nimavat.shortid.ShortId.generate()
 }

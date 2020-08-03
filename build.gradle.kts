@@ -32,9 +32,13 @@ dependencies {
 
     api("commons-codec:commons-codec:1.13")
 
+    api("me.nimavat:shortid:1.0.1.RC1")
+
     api("com.github.javafaker:javafaker:1.0.2")
 
     api("io.springfox:springfox-core:2.9.2")
+
+    testImplementation(kotlin("test-junit5"))
 }
 
 tasks {
@@ -43,5 +47,8 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = VERSION_1_8.toString()
+    }
+    test {
+        useJUnitPlatform()
     }
 }
