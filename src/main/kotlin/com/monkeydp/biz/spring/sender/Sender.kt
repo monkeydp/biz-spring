@@ -22,33 +22,39 @@ abstract class BaseSender : Sender {
     }
 }
 
-class SendParams(
-        val content: CharSequence,
-        val address: CharSequence
-)
+interface SendParams {
+    val content: CharSequence
+    val address: CharSequence
 
-interface MobileSender : Sender
+    companion object {
+        operator fun invoke(
+                content: CharSequence,
+                address: CharSequence
+        ): SendParams =
+                object : SendParams {
+                    override val content = content
+                    override val address = address
+                }
+    }
+}
 
-class MobileSenderImpl : BaseSender(), MobileSender {
+/**
+ * ShortMessageService
+ */
+interface Sms : Sender
+
+abstract class BaseSms : BaseSender(), Sms {
     override fun checkAddress(address: CharSequence) {
         if (!address.isMobile())
             ierror("发送地址有误, $address 不是手机号")
     }
-
-    override fun innerSend(params: SendParams) {
-        TODO("Not yet implemented")
-    }
 }
 
-interface EmailSender : Sender
+interface EmailService : Sender
 
-class EmailSenderImpl : BaseSender(), EmailSender {
+abstract class BaseEmailService : BaseSender(), EmailService {
     override fun checkAddress(address: CharSequence) {
         if (!address.isEmail())
             ierror("发送地址有误, $address 不是邮箱")
-    }
-
-    override fun innerSend(params: SendParams) {
-        TODO("Not yet implemented")
     }
 }

@@ -38,6 +38,8 @@ dependencies {
 
     api("io.springfox:springfox-core:2.9.2")
 
+    api("com.aliyun:aliyun-java-sdk-core:4.5.1")
+
     testImplementation(kotlin("test-junit5"))
 }
 
