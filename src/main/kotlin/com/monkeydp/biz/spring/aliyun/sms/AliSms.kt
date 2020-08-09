@@ -17,15 +17,20 @@ import com.monkeydp.biz.spring.sender.SendParams
 class AliSms(
         private val config: SmsConfig
 ) : BaseSms() {
+
+    constructor(configInit: SmsConfigBuilder.() -> Unit) : this(
+            SmsConfig(SmsConfigBuilder().apply(configInit))
+    )
+
     override fun innerSend(params: SendParams) {
         config.apply {
             val profile: IClientProfile = DefaultProfile.getProfile(
-                    regionid,
+                    regionId,
                     accessKeyId,
                     accessKeySecret
             )
             DefaultProfile.addEndpoint(
-                    regionid,
+                    regionId,
                     product,
                     domain
             )
@@ -55,13 +60,33 @@ class AliSms(
 }
 
 class SmsConfig(
-        val regionid: String,
+        val regionId: String,
         val product: String,
         val domain: String,
         val accessKeyId: String,
         val accessKeySecret: String,
         val signName: String,
         val templateCode: String
-)
+) {
+    constructor(builder: SmsConfigBuilder) : this(
+            regionId = builder.regionId,
+            product = builder.product,
+            domain = builder.domain,
+            accessKeyId = builder.accessKeyId,
+            accessKeySecret = builder.accessKeySecret,
+            signName = builder.signName,
+            templateCode = builder.templateCode
+    )
+}
+
+class SmsConfigBuilder {
+    lateinit var regionId: String
+    lateinit var product: String
+    lateinit var domain: String
+    lateinit var accessKeyId: String
+    lateinit var accessKeySecret: String
+    lateinit var signName: String
+    lateinit var templateCode: String
+}
 
 class SmsSendParams
