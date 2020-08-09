@@ -28,7 +28,7 @@ interface FailResult : Result {
 
         operator fun invoke(
                 ex: Exception,
-                resultInfo: ResultInfo<*>
+                resultInfo: ResultInfo
         ): FailResult =
                 StdFailedResult(ex = ex, resultInfo = resultInfo)
     }
@@ -39,7 +39,7 @@ abstract class AbstractFailResult(
         override val code: String,
         override var msg: String
 ) : FailResult, AbstractResult() {
-    constructor(resultInfo: ResultInfo<*>) : this(resultInfo.code, resultInfo.msgPattern)
+    constructor(resultInfo: ResultInfo) : this(resultInfo.code, resultInfo.msgPattern)
 }
 
 private class StdFailedResult(
@@ -52,7 +52,7 @@ private class StdFailedResult(
 
     constructor (
             ex: Exception,
-            resultInfo: ResultInfo<*>
+            resultInfo: ResultInfo
     ) : this(resultInfo.code, resultInfo.msgPattern) {
         logger.error(ex)
     }

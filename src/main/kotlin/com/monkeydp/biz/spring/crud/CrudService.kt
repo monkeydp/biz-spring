@@ -113,7 +113,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun has(spec: () -> Specification<E>): Boolean =
             has(spec())
 
-    abstract class DataNotFoundEx(info: ResultInfo<*>, cause: Throwable? = null) : BizEx(info, cause)
+    abstract class DataNotFoundEx(info: ResultInfo, cause: Throwable? = null) : BizEx(info, cause)
 
     abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*>): DataNotFoundEx
 }

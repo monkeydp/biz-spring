@@ -39,6 +39,7 @@ dependencies {
     api("io.springfox:springfox-core:2.9.2")
 
     api("com.aliyun:aliyun-java-sdk-core:4.5.1")
+    api("com.aliyun:aliyun-java-sdk-dysmsapi:1.0.0")
 
     testImplementation(kotlin("test-junit5"))
 }

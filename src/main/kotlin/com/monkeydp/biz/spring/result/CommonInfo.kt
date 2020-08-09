@@ -7,7 +7,7 @@ package com.monkeydp.biz.spring.result
 enum class CommonInfo(
         override val code: String,
         override val msgPattern: String
-) : ResultInfo<CommonInfo> {
+) : ResultInfo {
     ARGUMENT_ILLEGAL("300", "参数不合法"),
     DATA_NOT_FOUND("301", "`{object}`未找到"),
 
