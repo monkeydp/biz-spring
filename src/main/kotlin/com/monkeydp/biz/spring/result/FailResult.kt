@@ -70,7 +70,7 @@ class InnerFailedResult(
     init {
         ex.config.apply {
             when {
-                hidestack -> logger.log(logLevel, "${ex.msg} - ${ex.stackTrace.first()}")
+                hidestack -> logger.log(logLevel, ex.msg)
                 else -> logger.log(logLevel, ex)
             }
         }

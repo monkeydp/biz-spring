@@ -11,6 +11,19 @@ import org.springframework.web.bind.MethodArgumentNotValidException
  * @date 2020/6/11
  */
 object ExHandler {
+
+    fun handle(throwable: Throwable) {
+        when (throwable) {
+            is FailEx -> handle(throwable)
+            is MethodArgumentNotValidException -> handle(throwable)
+            is BindException -> handle(throwable)
+            is BizEx -> handle(throwable)
+            is InnerException -> handle(throwable)
+            is Exception -> handle(throwable)
+            else -> throw throwable
+        }
+    }
+
     fun handle(ex: Exception) =
             FailResult(ex, INNER_ERROR)
 
