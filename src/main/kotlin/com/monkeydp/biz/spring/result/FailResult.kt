@@ -3,7 +3,9 @@ package com.monkeydp.biz.spring.result
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.ARGUMENT_ILLEGAL
+import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
 import com.monkeydp.tools.exception.ierror
+import com.monkeydp.tools.exception.inner.InnerException
 import com.monkeydp.tools.ext.logger.debug
 import com.monkeydp.tools.ext.logger.error
 import com.monkeydp.tools.ext.logger.getLogger
@@ -21,7 +23,7 @@ interface FailResult : Result {
 
     companion object {
         operator fun invoke(code: String, msg: String): FailResult =
-                StdFailedResult(code = code, msg = msg)
+                UnknownFailedResult(code = code, msg = msg)
 
         operator fun invoke(code: Any, msg: String): FailResult =
                 invoke(code.toString(), msg)
@@ -30,7 +32,7 @@ interface FailResult : Result {
                 ex: Exception,
                 resultInfo: ResultInfo
         ): FailResult =
-                StdFailedResult(ex = ex, resultInfo = resultInfo)
+                UnknownFailedResult(ex = ex, resultInfo = resultInfo)
     }
 }
 
@@ -42,7 +44,7 @@ abstract class AbstractFailResult(
     constructor(resultInfo: ResultInfo) : this(resultInfo.code, resultInfo.msgPattern)
 }
 
-private class StdFailedResult(
+private class UnknownFailedResult(
         code: String,
         msg: String
 ) : AbstractFailResult(code, msg) {
@@ -58,15 +60,32 @@ private class StdFailedResult(
     }
 }
 
-class BizFailedResult(
-        bizEx: BizEx
-) : AbstractFailResult(bizEx.info.code, bizEx.message) {
+class InnerFailedResult(
+        ex: InnerException
+) : AbstractFailResult(INNER_ERROR.code, ex.msg) {
     companion object {
         private val logger = getLogger()
     }
 
     init {
-        logger.log(bizEx.logLevel, "${bizEx.info.code} - ${bizEx.message}")
+        ex.config.apply {
+            when {
+                hidestack -> logger.log(logLevel, "${ex.msg} - ${ex.stackTrace.first()}")
+                else -> logger.log(logLevel, ex)
+            }
+        }
+    }
+}
+
+class BizFailedResult(
+        ex: BizEx
+) : AbstractFailResult(ex.info.code, ex.message) {
+    companion object {
+        private val logger = getLogger()
+    }
+
+    init {
+        logger.log(ex.logLevel, "${ex.info.code} - ${ex.message}")
     }
 }
 

@@ -2,8 +2,9 @@ package com.monkeydp.biz.spring.result
 
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
-import org.springframework.web.bind.MethodArgumentNotValidException
+import com.monkeydp.tools.exception.inner.InnerException
 import org.springframework.validation.BindException
+import org.springframework.web.bind.MethodArgumentNotValidException
 
 /**
  * @author iPotato-Work
@@ -12,6 +13,9 @@ import org.springframework.validation.BindException
 object ExHandler {
     fun handle(ex: Exception) =
             FailResult(ex, INNER_ERROR)
+
+    fun handle(ex: InnerException) =
+            InnerFailedResult(ex)
 
     fun handle(ex: BizEx) =
             BizFailedResult(ex)

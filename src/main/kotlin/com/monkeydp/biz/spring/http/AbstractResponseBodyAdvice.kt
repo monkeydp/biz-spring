@@ -5,6 +5,7 @@ import com.monkeydp.biz.spring.result.ExHandler
 import com.monkeydp.biz.spring.result.FailEx
 import com.monkeydp.biz.spring.result.Result
 import com.monkeydp.biz.spring.result.SuccessResult
+import com.monkeydp.tools.exception.inner.InnerException
 import com.monkeydp.tools.ext.kotlin.toJson
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
@@ -44,6 +45,11 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     @ResponseBody
     @ExceptionHandler(Exception::class)
     open fun handle(ex: Exception) =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(InnerException::class)
+    open fun handle(ex: InnerException) =
             ExHandler.handle(ex)
 
     @ResponseBody
