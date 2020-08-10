@@ -40,6 +40,7 @@ class AliSms(
                         it.phoneNumbers = params.address.toString()
                         it.signName = signName
                         it.templateCode = templateCode
+                        it.templateParam = params.content.toString()
                     }
 
             val acsClient: IAcsClient = DefaultAcsClient(profile)
