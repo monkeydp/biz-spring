@@ -35,11 +35,11 @@ class AliSms(
                     domain
             )
             val request = SendSmsRequest()
-                    .apply {
-                        setSysMethod(POST)
-                        phoneNumbers = params.address.toString()
-                        signName = signName
-                        templateCode = templateCode
+                    .also {
+                        it.setSysMethod(POST)
+                        it.phoneNumbers = params.address.toString()
+                        it.signName = signName
+                        it.templateCode = templateCode
                     }
 
             val acsClient: IAcsClient = DefaultAcsClient(profile)
