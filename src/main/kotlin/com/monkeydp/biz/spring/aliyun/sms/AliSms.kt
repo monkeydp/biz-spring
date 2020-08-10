@@ -40,6 +40,7 @@ class AliSms(
                         it.phoneNumbers = params.address.toString()
                         it.signName = signName
                         it.templateCode = templateCode
+                        it.templateParam = params.content.toString()
                     }
 
             val acsClient: IAcsClient = DefaultAcsClient(profile)
@@ -59,24 +60,27 @@ class AliSms(
     }
 }
 
-class SmsConfig(
-        val regionId: String,
-        val product: String,
-        val domain: String,
-        val accessKeyId: String,
-        val accessKeySecret: String,
-        val signName: String,
-        val templateCode: String
-) {
-    constructor(builder: SmsConfigBuilder) : this(
-            regionId = builder.regionId,
-            product = builder.product,
-            domain = builder.domain,
-            accessKeyId = builder.accessKeyId,
-            accessKeySecret = builder.accessKeySecret,
-            signName = builder.signName,
-            templateCode = builder.templateCode
-    )
+interface SmsConfig {
+    val regionId: String
+    val product: String
+    val domain: String
+    val accessKeyId: String
+    val accessKeySecret: String
+    val signName: String
+    val templateCode: String
+
+    companion object {
+        operator fun invoke(builder: SmsConfigBuilder): SmsConfig =
+                object : SmsConfig {
+                    override val regionId = builder.regionId
+                    override val product = builder.product
+                    override val domain = builder.domain
+                    override val accessKeyId = builder.accessKeyId
+                    override val accessKeySecret = builder.accessKeySecret
+                    override val signName = builder.signName
+                    override val templateCode = builder.templateCode
+                }
+    }
 }
 
 class SmsConfigBuilder {

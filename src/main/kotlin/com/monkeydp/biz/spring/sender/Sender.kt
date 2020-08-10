@@ -3,6 +3,7 @@ package com.monkeydp.biz.spring.sender
 import com.monkeydp.biz.spring.regex.isEmail
 import com.monkeydp.biz.spring.regex.isMobile
 import com.monkeydp.tools.exception.ierror
+import com.monkeydp.tools.json.Jsonable
 
 /**
  * @author iPotato-Work
@@ -35,6 +36,15 @@ interface SendParams {
                     override val content = content
                     override val address = address
                 }
+
+        operator fun invoke(
+                content: Jsonable,
+                address: CharSequence
+        ): SendParams =
+                invoke(
+                        content = content.toJson(),
+                        address = address
+                )
     }
 }
 
