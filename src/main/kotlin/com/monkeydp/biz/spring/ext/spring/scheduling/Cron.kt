@@ -9,14 +9,15 @@ import java.util.*
  * @author iPotato-Work
  * @date 2020/8/10
  */
-fun Date.toCronExp(): String =
+val Date.cronExp: String
+    get() =
         SimpleDateFormat("ss mm HH dd MM ?")
                 .format(this)
 
-fun TaskScheduler.scheduleCronTask(run: () -> Unit, cronExp: String) {
+fun TaskScheduler.scheduleCronTask(runFun: () -> Unit, cronExp: String) {
     schedule(object : Runnable {
         override fun run() {
-            run()
+            runFun()
         }
     }, CronTrigger(cronExp))
 }
