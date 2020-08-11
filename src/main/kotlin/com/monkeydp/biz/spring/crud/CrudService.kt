@@ -27,13 +27,13 @@ interface CrudService<E, ID> {
 
     fun findByIdOrNull(id: ID): E?
 
-    fun findAll(): List<E>
+    fun findAll(query: AllQuery = AllQuery()): List<E>
 
-    fun findAll(spec: Specification<E>): List<E>
+    fun findAll(spec: Specification<E>, query: AllQuery = AllQuery()): List<E>
 
-    fun findAll(pagingQuery: PagingQuery): Paging<E>
+    fun findAll(query: PagingQuery): Paging<E>
 
-    fun findAll(spec: Specification<E>, pagingQuery: PagingQuery): Paging<E>
+    fun findAll(spec: Specification<E>, query: PagingQuery): Paging<E>
 
     fun delete(entity: E)
 
@@ -75,17 +75,18 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
             repo.findById(id)
                     .orElse(null)
 
-    override fun findAll(): List<E> = repo.findAll()
+    override fun findAll(query: AllQuery): List<E> =
+            repo.findAll(query.sort)
 
-    override fun findAll(spec: Specification<E>): List<E> =
-            repo.findAll(spec)
+    override fun findAll(spec: Specification<E>, query: AllQuery): List<E> =
+            repo.findAll(spec, query.sort)
 
-    override fun findAll(pagingQuery: PagingQuery): Paging<E> =
-            repo.findAll(pagingQuery.pageable)
+    override fun findAll(query: PagingQuery): Paging<E> =
+            repo.findAll(query.pageable)
                     .run(::Paging)
 
-    override fun findAll(spec: Specification<E>, pagingQuery: PagingQuery): Paging<E> =
-            repo.findAll(spec, pagingQuery.pageable)
+    override fun findAll(spec: Specification<E>, query: PagingQuery): Paging<E> =
+            repo.findAll(spec, query.pageable)
                     .run(::Paging)
 
     override fun delete(entity: E) = repo.delete(entity)
