@@ -2,6 +2,7 @@ package com.monkeydp.biz.spring.result
 
 import com.monkeydp.biz.spring.result.SuccessResult.Companion.SUCCESS_CODE
 import com.monkeydp.tools.ext.kotlin.singleton
+import com.monkeydp.tools.ext.kotlin.toDataString
 import kotlin.properties.Delegates
 
 /**
@@ -12,7 +13,10 @@ interface Result {
     val code: String
 }
 
-abstract class AbstractResult : Result
+abstract class AbstractResult : Result {
+    override fun toString() =
+            toDataString()
+}
 
 class StdResult<T : Any>(
         override val code: String

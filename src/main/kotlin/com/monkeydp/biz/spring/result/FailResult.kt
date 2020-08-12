@@ -75,6 +75,11 @@ class InnerFailedResult(
             }
         }
     }
+
+    fun hideMsg() {
+        logger.info("隐藏内部错误信息, 原失败结果: $this")
+        this.msg = "内部错误"
+    }
 }
 
 class BizFailedResult(
