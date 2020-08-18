@@ -7,4 +7,5 @@ package com.monkeydp.biz.spring.http
 object MyHttpHeaders {
     const val AUTO_LOGIN = "autologin"
     const val WITH_KEYS = "withKeys"
+    const val FLATTEN = "flatten"
 }

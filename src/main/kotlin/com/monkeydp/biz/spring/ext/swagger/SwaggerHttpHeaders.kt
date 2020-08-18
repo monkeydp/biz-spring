@@ -1,6 +1,7 @@
 package com.monkeydp.biz.spring.ext.swagger
 
 import com.monkeydp.biz.spring.http.MyHttpHeaders.AUTO_LOGIN
+import com.monkeydp.biz.spring.http.MyHttpHeaders.FLATTEN
 import com.monkeydp.biz.spring.http.MyHttpHeaders.WITH_KEYS
 import org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE
 import org.springframework.http.HttpHeaders.AUTHORIZATION
@@ -14,6 +15,15 @@ object SwaggerHttpHeaders {
                     .modelRef(ModelRef("boolean"))
                     .defaultValue("true")
                     .description("响应参数是否包含键名")
+                    .parameterType("header")
+                    .build()
+
+    val flatten =
+            ParameterBuilder()
+                    .name(FLATTEN)
+                    .modelRef(ModelRef("boolean"))
+                    .defaultValue("true")
+                    .description("响应参数是否展平, 即多层对象变一层, 多维数组变一维")
                     .parameterType("header")
                     .build()
 
