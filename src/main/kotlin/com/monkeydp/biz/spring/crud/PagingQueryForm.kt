@@ -31,9 +31,11 @@ interface PagingQueryForm {
 
 abstract class BasePagingQueryForm(
         @CurrentPageCstr
+        @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
         override val currentPage: Int = DEFAULT_CURRENT_PAGE,
 
         @PageSizeCstr
+        @get:ApiModelProperty("每页记录数", example = DEFAULT_PAGE_SIZE.toString())
         override val pageSize: Int = DEFAULT_PAGE_SIZE
 ) : PagingQueryForm {
     override fun toPagingQuery() =
