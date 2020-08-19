@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.monkeydp.biz"
-version = "1.0.1-SNAPSHOT"
+version = "1.0.1.RELEASE"
 java.sourceCompatibility = VERSION_1_8
 
 val springVersion = "5.2.6.RELEASE"
@@ -17,7 +17,7 @@ dependencies {
     api(kotlin("reflect"))
     api(kotlin("stdlib-jdk8"))
 
-    api("com.monkeydp:tools:1.1.0.RELEASE")
+    api("com.monkeydp:tools:1.1.1.RELEASE")
 
     api("org.springframework:spring-messaging:$springVersion")
     api("org.springframework:spring-webmvc:$springVersion")
