@@ -1,8 +1,8 @@
 package com.monkeydp.biz.spring.ext.swagger
 
-import com.monkeydp.biz.spring.http.MyHttpHeaders.AUTO_LOGIN
-import com.monkeydp.biz.spring.http.MyHttpHeaders.FLATTEN
-import com.monkeydp.biz.spring.http.MyHttpHeaders.WITH_KEYS
+import com.monkeydp.biz.spring.http.BizHttpHeaders.AUTO_LOGIN
+import com.monkeydp.biz.spring.http.BizHttpHeaders.FLATTEN
+import com.monkeydp.biz.spring.http.BizHttpHeaders.WITH_KEYS
 import org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import springfox.documentation.builders.ParameterBuilder
@@ -22,7 +22,7 @@ object SwaggerHttpHeaders {
             ParameterBuilder()
                     .name(FLATTEN)
                     .modelRef(ModelRef("boolean"))
-                    .defaultValue("true")
+                    .defaultValue("false")
                     .description("响应参数是否展平, 即多层对象变一层, 多维数组变一维")
                     .parameterType("header")
                     .build()
