@@ -26,6 +26,11 @@ interface QueryView : SimpleView
 interface ListView : SimpleView
 
 /**
+ * 分页列表视图
+ */
+interface PagingView : ListView
+
+/**
  * 创建视图
  */
 interface CreateView : SimpleView
