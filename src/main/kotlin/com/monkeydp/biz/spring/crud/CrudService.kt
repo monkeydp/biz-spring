@@ -41,6 +41,8 @@ interface CrudService<E, ID> {
 
     fun delete(spec: Specification<E>)
 
+    fun deleteAll(spec: Specification<E>)
+
     fun count(): Long
 
     fun has(spec: Specification<E>): Boolean
@@ -104,6 +106,9 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
         entity ?: throw buildDataNotFoundEx(entityClass)
         delete(entity)
     }
+
+    override fun deleteAll(spec: Specification<E>) =
+            repo.deleteAll(findAll(spec))
 
     override fun count(): Long =
             repo.count()
