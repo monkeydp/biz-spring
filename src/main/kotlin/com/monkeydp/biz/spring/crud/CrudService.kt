@@ -35,6 +35,10 @@ interface CrudService<E, ID> {
 
     fun findAll(spec: Specification<E>, query: PagingQuery): Paging<E>
 
+    fun first(query: FirstQuery = FirstQuery()): E
+
+    fun first(spec: Specification<E>, query: FirstQuery = FirstQuery()): E
+
     fun delete(entity: E)
 
     fun deleteById(id: ID)
@@ -90,6 +94,12 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun findAll(spec: Specification<E>, query: PagingQuery): Paging<E> =
             repo.findAll(spec, query.pageable)
                     .run(::Paging)
+
+    override fun first(query: FirstQuery): E =
+            findAll(query).first()
+
+    override fun first(spec: Specification<E>, query: FirstQuery): E =
+            findAll(spec, query).first()
 
     override fun delete(entity: E) = repo.delete(entity)
 
