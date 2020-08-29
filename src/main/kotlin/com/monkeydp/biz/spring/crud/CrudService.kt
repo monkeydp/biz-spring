@@ -45,6 +45,8 @@ interface CrudService<E, ID> {
 
     fun delete(spec: Specification<E>)
 
+    fun deleteOrNull(spec: Specification<E>)
+
     fun deleteAll(spec: Specification<E>)
 
     fun count(): Long
@@ -103,7 +105,8 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun first(spec: Specification<E>, query: FirstQuery): E =
             findAll(spec, query).first()
 
-    override fun delete(entity: E) = repo.delete(entity)
+    override fun delete(entity: E) =
+            repo.delete(entity)
 
     override fun deleteById(id: ID) {
         try {
@@ -117,6 +120,11 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
         val entity = findOrNull(spec)
         entity ?: throw buildDataNotFoundEx(entityClass)
         delete(entity)
+    }
+
+    override fun deleteOrNull(spec: Specification<E>) {
+        val entity = findOrNull(spec)
+        entity?.run(::delete)
     }
 
     override fun deleteAll(spec: Specification<E>) =
