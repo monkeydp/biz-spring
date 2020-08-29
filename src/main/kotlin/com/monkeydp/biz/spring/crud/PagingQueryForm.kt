@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification
  * @author iPotato
  * @date 2020/4/27
  */
-@JsonDeserialize(`as` = StdPqForm::class)
+@JsonDeserialize(`as` = PqForm::class)
 @ApiModel("分页查询表单")
 interface PagingQueryForm {
     @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
@@ -25,7 +25,7 @@ interface PagingQueryForm {
         operator fun invoke(
                 currentPage: Int = DEFAULT_CURRENT_PAGE,
                 pageSize: Int = DEFAULT_PAGE_SIZE
-        ): PagingQueryForm = StdPqForm(currentPage, pageSize)
+        ): PagingQueryForm = PqForm(currentPage, pageSize)
     }
 }
 
@@ -45,7 +45,7 @@ abstract class BasePqForm(
             )
 }
 
-private class StdPqForm(
+class PqForm(
         currentPage: Int = DEFAULT_CURRENT_PAGE,
         pageSize: Int = DEFAULT_PAGE_SIZE
 ) : BasePqForm(currentPage, pageSize)
