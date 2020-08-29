@@ -49,6 +49,8 @@ interface CrudService<E, ID> {
 
     fun count(): Long
 
+    fun count(spec: Specification<E>): Long
+
     fun has(spec: Specification<E>): Boolean
 
     fun has(spec: () -> Specification<E>): Boolean
@@ -122,6 +124,9 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
 
     override fun count(): Long =
             repo.count()
+
+    override fun count(spec: Specification<E>) =
+            repo.count(spec)
 
     override fun has(spec: Specification<E>) =
             findAll(spec).isNotEmpty()

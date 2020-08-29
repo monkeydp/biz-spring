@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification
  * @author iPotato
  * @date 2020/4/27
  */
-@JsonDeserialize(`as` = StdPagingQueryForm::class)
+@JsonDeserialize(`as` = StdPqForm::class)
 @ApiModel("分页查询表单")
 interface PagingQueryForm {
     @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
@@ -23,13 +23,13 @@ interface PagingQueryForm {
 
     companion object {
         operator fun invoke(
-                currentPage: Int,
-                pageSize: Int
-        ): PagingQueryForm = StdPagingQueryForm(currentPage, pageSize)
+                currentPage: Int = DEFAULT_CURRENT_PAGE,
+                pageSize: Int = DEFAULT_PAGE_SIZE
+        ): PagingQueryForm = StdPqForm(currentPage, pageSize)
     }
 }
 
-abstract class BasePagingQueryForm(
+abstract class BasePqForm(
         @CurrentPageCstr
         @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
         override val currentPage: Int = DEFAULT_CURRENT_PAGE,
@@ -45,10 +45,10 @@ abstract class BasePagingQueryForm(
             )
 }
 
-private class StdPagingQueryForm(
+private class StdPqForm(
         currentPage: Int = DEFAULT_CURRENT_PAGE,
         pageSize: Int = DEFAULT_PAGE_SIZE
-) : BasePagingQueryForm(currentPage, pageSize)
+) : BasePqForm(currentPage, pageSize)
 
 fun <E, ID> CrudService<E, ID>.findAll(form: PagingQueryForm): Paging<E> =
         findAll(form.toPagingQuery())
