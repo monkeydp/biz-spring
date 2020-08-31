@@ -29,12 +29,24 @@ data class Paging<T>(
          * Json 序列化前未知
          */
         @ApiModelProperty("当前页记录列数", example = "2")
-        var columns: Int = -1,
+        var columns: Int? = null,
 
         @JsonFlatten(TWO)
         @ApiModelProperty("记录数据")
         val content: List<T>
 ) {
+    companion object {
+        fun <T> empty(form: PagingQueryForm): Paging<T> =
+                Paging<T>(
+                        currentPage = form.currentPage,
+                        pageSize = form.pageSize,
+                        total = 0,
+                        pageCount = 0,
+                        rows = 0,
+                        content = emptyList()
+                )
+    }
+
     constructor(page: Page<T>) : this(
             currentPage = page.number + 1,
             pageSize = page.size,
