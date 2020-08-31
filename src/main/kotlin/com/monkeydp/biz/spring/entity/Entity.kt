@@ -1,5 +1,7 @@
 package com.monkeydp.biz.spring.entity
 
+import com.monkeydp.biz.spring.crud.HasCreatedAt
+import com.monkeydp.biz.spring.crud.HasUpdatedAt
 import com.monkeydp.tools.ext.kotlin.toJson
 import com.monkeydp.tools.ext.kotlin.toMemberPropValues
 import org.hibernate.annotations.CreationTimestamp
@@ -11,10 +13,7 @@ import java.util.*
 import javax.persistence.Column
 import javax.persistence.MappedSuperclass
 
-interface EntityAware {
-    var createdAt: Date
-    var updatedAt: Date
-}
+interface EntityAware : HasCreatedAt, HasUpdatedAt
 
 interface Entity<E : Entity<E>> : EntityAware {
     fun asChild(): E
