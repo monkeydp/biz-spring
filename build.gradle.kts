@@ -8,8 +8,8 @@ plugins {
 
 group = "com.monkeydp.biz"
 version = "1.0.2-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = VERSION_1_8
+java.targetCompatibility = VERSION_1_8
 
 val springVersion = "5.2.6.RELEASE"
 
