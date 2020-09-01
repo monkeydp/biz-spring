@@ -47,13 +47,13 @@ class AliSms(
             val resp = try {
                 acsClient.getAcsResponse(request)
             } catch (ex: ClientException) {
-                throw SmsSendEx(
+                throw AliSmsSendEx(
                         errInfo = SmsErrInfo(ex.errCode, ex.errMsg),
                         cause = ex
                 )
             }
             if (!resp.success)
-                throw SmsSendEx(
+                throw AliSmsSendEx(
                         errInfo = SmsErrInfo(resp.code, resp.message)
                 )
         }
@@ -94,3 +94,8 @@ class SmsConfigBuilder {
 }
 
 class SmsSendParams
+
+class AliSmsSendEx(
+        errInfo: SmsErrInfo,
+        cause: ClientException? = null
+) : SmsSendEx(errInfo, cause)
