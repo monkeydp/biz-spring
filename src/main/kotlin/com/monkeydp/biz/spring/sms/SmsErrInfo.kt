@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring.aliyun.sms
+package com.monkeydp.biz.spring.sms
 
 import com.monkeydp.biz.spring.result.ResultInfo
 

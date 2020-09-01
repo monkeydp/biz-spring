@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring.aliyun.sms
+package com.monkeydp.biz.spring.sms.aliyun
 
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse
 

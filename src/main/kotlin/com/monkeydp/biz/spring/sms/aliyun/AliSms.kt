@@ -1,4 +1,4 @@
-package com.monkeydp.biz.spring.aliyun.sms
+package com.monkeydp.biz.spring.sms.aliyun
 
 import com.aliyuncs.DefaultAcsClient
 import com.aliyuncs.IAcsClient
@@ -9,6 +9,8 @@ import com.aliyuncs.profile.DefaultProfile
 import com.aliyuncs.profile.IClientProfile
 import com.monkeydp.biz.spring.sender.BaseSms
 import com.monkeydp.biz.spring.sender.SendParams
+import com.monkeydp.biz.spring.sms.SmsErrInfo
+import com.monkeydp.biz.spring.sms.SmsSendEx
 
 /**
  * @author iPotato-Work
