@@ -12,7 +12,7 @@ interface ListQuery {
 
     companion object {
         val DEFAULT_SORT =
-                Sort.by(Entity<*>::createdAt.name)
+                Sort.by(Entity::createdAt.name)
                         .descending()
     }
 }

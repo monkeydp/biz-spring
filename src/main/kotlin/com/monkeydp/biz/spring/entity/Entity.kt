@@ -15,22 +15,10 @@ import javax.persistence.MappedSuperclass
 
 interface EntityAware : HasCreatedAt, HasUpdatedAt
 
-interface Entity<E : Entity<E>> : EntityAware {
-    fun asChild(): E
-
-    /**
-     * 完整信息 (因为有 lazy load)
-     */
-    fun full(): E
-
-    /**
-     * 是否和另一个实体相同 (包含关联实体)
-     */
-    fun isFullSameAs(another: E): Boolean
-}
+interface Entity : EntityAware
 
 @MappedSuperclass
-abstract class AbstractEntity<E : AbstractEntity<E>> : Entity<E>, Serializable {
+abstract class AbstractEntity : Entity, Serializable {
 
     companion object {
         const val INVALID_ID = -1L
@@ -43,23 +31,26 @@ abstract class AbstractEntity<E : AbstractEntity<E>> : Entity<E>, Serializable {
     @field:UpdateTimestamp
     @Column(nullable = false)
     override lateinit var updatedAt: Date
-
-    @Suppress("UNCHECKED_CAST")
-    override fun asChild(): E =
-            this as E
-
-    override fun isFullSameAs(another: E): Boolean =
-            full().toJson() == another.full().toJson()
-
-    /**
-     * @see Transactional 如果有 lazy load, 记得使用 @Transactional
-     */
-    override fun full(): E =
-            run {
-                toMemberPropValues().forEach {
-                    if (it is PersistentBag)
-                        it.size
-                }
-                asChild()
-            }
 }
+
+/**
+ * 完整信息
+ *
+ * 因为可能有 lazy load, 所需需要全部属性加载一次
+ *
+ * @see Transactional 如果有 lazy load, 记得使用 @Transactional
+ */
+fun <E : Entity> E.full(): E =
+        run {
+            toMemberPropValues().forEach {
+                if (it is PersistentBag)
+                    it.size
+            }
+            this
+        }
+
+/**
+ * 是否和另一个实体相同 (包含关联实体)
+ */
+fun <E : Entity> E.isFullSameAs(another: E): Boolean =
+        full().toJson() == another.full().toJson()
