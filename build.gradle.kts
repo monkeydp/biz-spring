@@ -15,32 +15,30 @@ val springVersion = "5.2.6.RELEASE"
 
 dependencies {
     // kotlin
-    api(kotlin("reflect"))
-    api(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
 
     api("com.monkeydp:tools:1.1.1.RELEASE")
 
-    api("org.springframework:spring-messaging:$springVersion")
+    implementation("org.springframework:spring-messaging:$springVersion")
     api("org.springframework:spring-webmvc:$springVersion")
 
-    api("jakarta.persistence:jakarta.persistence-api:2.2.3")
-    api("org.hibernate:hibernate-core:5.4.15.Final")
-    api("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.10.4")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.4")
+    implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
+    implementation("org.hibernate:hibernate-core:5.4.15.Final")
+    implementation("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.10.4")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.4")
 
-    api("com.ibm.icu:icu4j:67.1")
+    implementation("com.ibm.icu:icu4j:67.1")
 
-    api("commons-codec:commons-codec:1.13")
+    implementation("commons-codec:commons-codec:1.13")
 
-    api("me.nimavat:shortid:1.0.1.RC1")
+    implementation("me.nimavat:shortid:1.0.1.RC1")
 
-    api("com.github.javafaker:javafaker:1.0.2")
+    implementation("io.springfox:springfox-core:2.9.2")
 
-    api("io.springfox:springfox-core:2.9.2")
-
-    api("com.aliyun:aliyun-java-sdk-core:4.5.1")
-    api("com.aliyun:aliyun-java-sdk-dysmsapi:1.0.0")
+    implementation("com.aliyun:aliyun-java-sdk-core:4.5.1")
+    implementation("com.aliyun:aliyun-java-sdk-dysmsapi:1.0.0")
 
     testImplementation(kotlin("test-junit5"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.0")
