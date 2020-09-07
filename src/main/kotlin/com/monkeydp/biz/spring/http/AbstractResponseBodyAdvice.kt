@@ -1,13 +1,11 @@
 package com.monkeydp.biz.spring.http
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.monkeydp.biz.spring.auth.AccountNotExistEx
-import com.monkeydp.biz.spring.auth.PwdIncorrectEx
 import com.monkeydp.biz.spring.env.SpringProps
 import com.monkeydp.biz.spring.result.ExHandler
 import com.monkeydp.biz.spring.result.FailResult
+import com.monkeydp.biz.spring.result.JsonSuccessResult
 import com.monkeydp.biz.spring.result.Result
-import com.monkeydp.biz.spring.result.SuccessResult
 import com.monkeydp.tools.ext.jackson.removeAllKeys
 import com.monkeydp.tools.ext.kotlin.convertValue
 import com.monkeydp.tools.ext.kotlin.singleton
@@ -21,7 +19,6 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import java.lang.reflect.UndeclaredThrowableException
 import javax.servlet.http.HttpServletRequest
 import kotlin.properties.Delegates
 
@@ -39,21 +36,25 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
 
     override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
 
-    override fun beforeBodyWrite(
-            body: Any?,
-            returnType: MethodParameter,
-            selectedContentType: MediaType,
-            selectedConverterType: Class<out HttpMessageConverter<*>>,
-            request: ServerHttpRequest,
-            response: ServerHttpResponse
-    ): Any? =
+    override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? =
             if (body is Result) body
-            else
-                SuccessResult(data = body).run {
-                    if (body is String)
-                        this.toJson() as Any
-                    else this
-                }
+            else JsonSuccessResult(data = body, returnType = returnType)
+                    .run {
+                        if (body is String)
+                            this.toJson()
+                        else toObjectNode()
+                                .assignColumns()
+                                .run {
+                                    if (request.flatten) {
+                                        flattenData()
+                                    } else this
+                                }
+                                .run {
+                                    if (request.removeAllKeys)
+                                        removeAllKeys()
+                                    else this
+                                }
+                    }
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)

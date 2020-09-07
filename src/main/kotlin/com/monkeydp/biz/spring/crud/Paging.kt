@@ -1,5 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
+import com.monkeydp.biz.spring.crud.Table.Companion.INVALID_COLUMNS
 import com.monkeydp.tools.ext.jackson.JsonFlatten
 import com.monkeydp.tools.ext.jackson.JsonFlatten.Times.TWO
 import com.monkeydp.tools.ext.swagger.ApiFixedPosition
@@ -23,18 +24,18 @@ data class Paging<T>(
         val pageCount: Int,
 
         @ApiModelProperty("当前页记录行数", example = "2")
-        val rows: Int,
+        override val rows: Int,
 
         /**
          * Json 序列化前未知
          */
-        @ApiModelProperty("当前页记录列数", example = "2")
-        var columns: Int? = null,
+        @ApiModelProperty("当前页记录列数", example = "3")
+        override var columns: Int = INVALID_COLUMNS,
 
         @JsonFlatten(TWO)
         @ApiModelProperty("记录数据")
-        val content: List<T>
-) {
+        override val content: Collection<T>
+) : Table<T> {
     companion object {
         fun <T> empty(form: PagingQueryForm): Paging<T> =
                 Paging<T>(
