@@ -1,8 +1,8 @@
 package com.monkeydp.biz.spring.ext.swagger
 
-import com.monkeydp.biz.spring.http.BizHttpHeaders.AUTO_LOGIN
-import com.monkeydp.biz.spring.http.BizHttpHeaders.FLATTEN
-import com.monkeydp.biz.spring.http.BizHttpHeaders.WITH_KEYS
+import com.monkeydp.biz.spring.http.BizHttpHeaderName.AUTO_LOGIN
+import com.monkeydp.biz.spring.http.BizHttpHeaderName.FLATTEN
+import com.monkeydp.biz.spring.http.BizHttpHeaderName.WITH_KEYS
 import org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import springfox.documentation.builders.ParameterBuilder

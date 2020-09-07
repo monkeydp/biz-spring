@@ -1,5 +1,8 @@
 package com.monkeydp.biz.spring.result
 
+import com.monkeydp.biz.spring.auth.AccountNotExistEx
+import com.monkeydp.biz.spring.auth.AuthFailEx
+import com.monkeydp.biz.spring.auth.PwdIncorrectEx
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
 import com.monkeydp.tools.exception.inner.InnerException
@@ -24,21 +27,27 @@ object ExHandler {
         }
     }
 
-    fun handle(ex: Exception) =
-            FailResult(ex, INNER_ERROR)
+    fun handle(ex: AccountNotExistEx): Nothing =
+            throw AuthFailEx(ex)
 
-    fun handle(ex: InnerException) =
-            InnerFailedResult(ex)
+    fun handle(ex: PwdIncorrectEx): Nothing =
+            throw AuthFailEx(ex)
 
-    fun handle(ex: BizEx) =
-            BizFailedResult(ex)
-
-    fun handle(ex: BindException) =
-            ArgsIllegalFailedResult(ex, ex.bindingResult)
+    fun handle(ex: FailEx) =
+            ex.result
 
     fun handle(ex: MethodArgumentNotValidException) =
             ArgsIllegalFailedResult(ex, ex.bindingResult)
 
-    fun handle(ex: FailEx) =
-            ex.result
+    fun handle(ex: BindException) =
+            ArgsIllegalFailedResult(ex, ex.bindingResult)
+
+    fun handle(ex: BizEx) =
+            BizFailedResult(ex)
+
+    fun handle(ex: InnerException) =
+            InnerFailedResult(ex)
+
+    fun handle(ex: Exception) =
+            FailResult(ex, INNER_ERROR)
 }
