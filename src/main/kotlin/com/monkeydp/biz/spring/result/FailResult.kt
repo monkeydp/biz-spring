@@ -23,16 +23,16 @@ interface FailResult : Result {
 
     companion object {
         operator fun invoke(code: String, msg: String): FailResult =
-                UnknownFailedResult(code = code, msg = msg)
+                FailedResultImpl(code = code, msg = msg)
 
         operator fun invoke(code: Any, msg: String): FailResult =
                 invoke(code.toString(), msg)
 
         operator fun invoke(
-                ex: Exception,
-                resultInfo: ResultInfo
+                resultInfo: ResultInfo,
+                cause: Throwable
         ): FailResult =
-                UnknownFailedResult(ex = ex, resultInfo = resultInfo)
+                FailedResultImpl(resultInfo = resultInfo, cause = cause)
     }
 }
 
@@ -41,23 +41,31 @@ abstract class AbstractFailResult(
         override val code: String,
         override var msg: String
 ) : FailResult, AbstractResult() {
-    constructor(resultInfo: ResultInfo) : this(resultInfo.code, resultInfo.msgPattern)
-}
 
-private class UnknownFailedResult(
-        code: String,
-        msg: String
-) : AbstractFailResult(code, msg) {
     companion object {
         private val logger = getLogger()
     }
 
+    constructor(resultInfo: ResultInfo) : this(resultInfo.code, resultInfo.msgPattern)
     constructor (
-            ex: Exception,
-            resultInfo: ResultInfo
+            resultInfo: ResultInfo,
+            cause: Throwable? = null
     ) : this(resultInfo.code, resultInfo.msgPattern) {
-        logger.error(ex)
+        if (cause != null)
+            logger.error(cause)
     }
+}
+
+private class FailedResultImpl : AbstractFailResult {
+    companion object {
+        private val logger = getLogger()
+    }
+
+    constructor(code: String, msg: String) : super(code, msg)
+    constructor (
+            resultInfo: ResultInfo,
+            cause: Throwable? = null
+    ) : super(resultInfo, cause)
 }
 
 class InnerFailedResult(
