@@ -58,7 +58,7 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)
-    open fun handle(throwable: Throwable) =
+    open fun handle(throwable: Throwable): FailResult =
             ExHandler.handle(throwable)
 }
 

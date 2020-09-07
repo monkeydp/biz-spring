@@ -7,7 +7,7 @@ import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
 import com.monkeydp.biz.spring.sms.SmsBusyEx
 import com.monkeydp.biz.spring.sms.SmsSendEx
-import com.monkeydp.tools.exception.inner.InnerException
+import com.monkeydp.tools.exception.inner.InnerEx
 import com.monkeydp.tools.ext.kotlin.invokeMethod
 import org.springframework.validation.BindException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -18,11 +18,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException
  */
 object ExHandler {
 
-    fun handle(throwable: Throwable) =
+    fun handle(throwable: Throwable): FailResult =
             ExHandler.invokeMethod<Any>(
                     "handle",
                     throwable
-            )
+            ) as FailResult
 
     fun handle(ex: AccountNotExistEx): Nothing =
             throw AuthFailEx(ex)
@@ -45,7 +45,7 @@ object ExHandler {
     fun handle(ex: BizEx) =
             BizFailedResult(ex)
 
-    fun handle(ex: InnerException) =
+    fun handle(ex: InnerEx) =
             InnerFailedResult(ex)
 
     fun handle(ex: Exception) =

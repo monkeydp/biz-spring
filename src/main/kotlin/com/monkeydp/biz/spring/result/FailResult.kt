@@ -1,15 +1,14 @@
 package com.monkeydp.biz.spring.result
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.monkeydp.biz.spring.ex.BizEx
+import com.monkeydp.biz.spring.ex.BizEx.Companion.DEFAULT_LOG_LEVEL
 import com.monkeydp.biz.spring.result.CommonInfo.ARGUMENT_ILLEGAL
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
 import com.monkeydp.tools.exception.ierror
-import com.monkeydp.tools.exception.inner.InnerException
-import com.monkeydp.tools.ext.logger.debug
-import com.monkeydp.tools.ext.logger.error
-import com.monkeydp.tools.ext.logger.getLogger
-import com.monkeydp.tools.ext.logger.log
+import com.monkeydp.tools.exception.inner.InnerEx
+import com.monkeydp.tools.ext.logger.*
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 
@@ -68,8 +67,8 @@ private class FailedResultImpl : AbstractFailResult {
     ) : super(resultInfo, cause)
 }
 
-class InnerFailedResult(
-        ex: InnerException
+open class InnerFailedResult(
+        ex: InnerEx
 ) : AbstractFailResult(INNER_ERROR.code, ex.msg) {
     companion object {
         private val logger = getLogger()
@@ -90,16 +89,44 @@ class InnerFailedResult(
     }
 }
 
-class BizFailedResult(
-        ex: BizEx
-) : AbstractFailResult(ex.info.code, ex.message) {
+open class BizFailedResult(
+        code: String,
+        msg: String,
+        @JsonIgnore
+        val cause: Throwable? = null,
+        @JsonIgnore
+        private val logLevel: LogLevel = DEFAULT_LOG_LEVEL
+) : AbstractFailResult(code = code, msg = msg) {
     companion object {
         private val logger = getLogger()
     }
 
+    constructor(ex: BizEx) : this(
+            code = ex.info.code,
+            msg = ex.message,
+            cause = ex,
+            logLevel = ex.logLevel
+    )
+
+    constructor(info: ResultInfo, cause: Throwable, logLevel: LogLevel = DEFAULT_LOG_LEVEL) : this(
+            code = info.code,
+            msg = info.msgPattern,
+            cause = cause,
+            logLevel = logLevel
+    )
+
     init {
-        logger.log(ex.logLevel, "${ex.info.code} - ${ex.message}")
+        logger.log(logLevel, logMsg())
     }
+
+    private fun logMsg() =
+            StringBuilder().apply {
+                append("${code} - ${msg}")
+                cause?.let {
+                    if (cause is InnerEx || cause is BizEx)
+                        append("- ${it.message}")
+                }
+            }.toString()
 }
 
 class ArgsIllegalFailedResult(
