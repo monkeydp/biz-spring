@@ -68,17 +68,17 @@ private class FailedResultImpl : AbstractFailResult {
 }
 
 open class InnerFailedResult(
-        ex: InnerEx
-) : AbstractFailResult(INNER_ERROR.code, ex.msg) {
+        cause: InnerEx
+) : AbstractFailResult(INNER_ERROR.code, cause.msg) {
     companion object {
         private val logger = getLogger()
     }
 
     init {
-        ex.config.apply {
+        cause.config.apply {
             when {
-                hidestack -> logger.log(logLevel, ex.msg)
-                else -> logger.log(logLevel, ex)
+                hidestack -> logger.log(logLevel, cause.msg)
+                else -> logger.log(logLevel, cause)
             }
         }
     }
@@ -101,11 +101,11 @@ open class BizFailedResult(
         private val logger = getLogger()
     }
 
-    constructor(ex: BizEx) : this(
-            code = ex.info.code,
-            msg = ex.message,
-            cause = ex,
-            logLevel = ex.logLevel
+    constructor(cause: BizEx) : this(
+            code = cause.info.code,
+            msg = cause.message,
+            cause = cause,
+            logLevel = cause.logLevel
     )
 
     constructor(info: ResultInfo, cause: Throwable, logLevel: LogLevel = DEFAULT_LOG_LEVEL) : this(
@@ -130,7 +130,7 @@ open class BizFailedResult(
 }
 
 class ArgsIllegalFailedResult(
-        ex: Exception,
+        cause: Exception,
         bindingResult: BindingResult?
 ) : AbstractFailResult(ARGUMENT_ILLEGAL) {
 
@@ -139,7 +139,7 @@ class ArgsIllegalFailedResult(
     }
 
     init {
-        logger.debug(ex)
+        logger.debug(cause)
     }
 
     val validErrors: List<ValidError> =
