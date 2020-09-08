@@ -18,7 +18,7 @@ import org.springframework.validation.FieldError
  */
 interface FailResult : Result {
     override val code: String
-    var msg: String
+    val msg: String
 
     companion object {
         operator fun invoke(code: String, msg: String): FailResult =
