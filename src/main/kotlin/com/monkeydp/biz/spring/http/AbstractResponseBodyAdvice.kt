@@ -40,21 +40,22 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
             if (body is Result) body
             else JsonSuccessResult(data = body, returnType = returnType)
                     .run {
-                        if (body is String)
-                            this.toJson()
+                        if (body is String) toJson()
                         else toObjectNode()
                                 .assignColumns()
-                                .run {
+                                .let {
                                     if (request.flatten) {
-                                        flattenData()
-                                    } else this
-                                }
-                                .run {
+                                        it.flattenData()
+                                    } else it
+                                }.beforeRemoveAllKeys(this)
+                                .let {
                                     if (request.removeAllKeys)
-                                        removeAllKeys()
-                                    else this
+                                        it.removeAllKeys()
+                                    else it
                                 }
                     }
+
+    protected open fun ObjectNode.beforeRemoveAllKeys(result: Result): ObjectNode = this
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)
