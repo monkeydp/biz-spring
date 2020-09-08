@@ -1,5 +1,7 @@
 package com.monkeydp.biz.spring.http
 
+import com.monkeydp.biz.spring.http.BizHttpHeaderName.FLATTEN
+import com.monkeydp.biz.spring.http.BizHttpHeaderName.WITH_KEYS
 import com.monkeydp.biz.spring.http.DefaultBizHttpHeader.DEFAULT_FLATTEN
 import com.monkeydp.biz.spring.http.DefaultBizHttpHeader.DEFAULT_WITH_KEYS
 import org.springframework.http.server.ServerHttpRequest
@@ -20,23 +22,42 @@ private object DefaultBizHttpHeader {
     const val DEFAULT_FLATTEN = false
 }
 
-fun ServerHttpRequest.headerOrNull(headerName: String) =
+private fun ServerHttpRequest.headerOrNull(headerName: String) =
         (headers[headerName] as? List<String>)?.first()
 
-val ServerHttpRequest.withKeys: Boolean
+private val ServerHttpRequest.withKeys: Boolean
     get() =
-        headerOrNull(BizHttpHeaderName.WITH_KEYS)?.toBoolean() ?: DEFAULT_WITH_KEYS
+        headerOrNull(WITH_KEYS)?.toBoolean() ?: DEFAULT_WITH_KEYS
 
-val ServerHttpRequest.flatten: Boolean
-    get() =
-        headerOrNull(BizHttpHeaderName.FLATTEN)?.toBoolean() ?: DEFAULT_FLATTEN
-
-val ServerHttpRequest.removeAllKeys
+private val ServerHttpRequest.removeAllKeys
     get() = !withKeys
 
-val HttpServletRequest.withKeys: Boolean
+private val ServerHttpRequest.flatten: Boolean
     get() =
-        getHeader(BizHttpHeaderName.WITH_KEYS)?.toBoolean() ?: DEFAULT_WITH_KEYS
+        headerOrNull(FLATTEN)?.toBoolean() ?: DEFAULT_FLATTEN
 
-val HttpServletRequest.removeAllKeys: Boolean
+val ServerHttpRequest.respDataCfg
+    get() =
+        ResponseDataConfig(
+                flatten = flatten,
+                removeAllKeys = removeAllKeys
+        )
+
+
+private val HttpServletRequest.withKeys: Boolean
+    get() =
+        getHeader(WITH_KEYS)?.toBoolean() ?: DEFAULT_WITH_KEYS
+
+private val HttpServletRequest.removeAllKeys: Boolean
     get() = !withKeys
+
+private val HttpServletRequest.flatten: Boolean
+    get() =
+        getHeader(FLATTEN)?.toBoolean() ?: DEFAULT_WITH_KEYS
+
+val HttpServletRequest.respDataCfg
+    get() =
+        ResponseDataConfig(
+                flatten = flatten,
+                removeAllKeys = removeAllKeys
+        )

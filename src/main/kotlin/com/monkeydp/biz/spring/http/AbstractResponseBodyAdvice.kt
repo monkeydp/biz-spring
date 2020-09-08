@@ -40,22 +40,23 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
             if (body is Result) body
             else JsonSuccessResult(data = body, returnType = returnType)
                     .run {
+                        val cfg = request.respDataCfg
                         if (body is String) toJson()
                         else toObjectNode()
                                 .assignColumns()
                                 .let {
-                                    if (request.flatten) {
+                                    if (cfg.flatten) {
                                         it.flattenData()
                                     } else it
-                                }.beforeRemoveAllKeys(this, request)
+                                }.beforeRemoveAllKeys(this, cfg)
                                 .let {
-                                    if (request.removeAllKeys)
+                                    if (cfg.removeAllKeys)
                                         it.removeAllKeys()
                                     else it
                                 }
                     }
 
-    protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, request: ServerHttpRequest): ObjectNode = this
+    protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, cfg: ResponseDataConfig): ObjectNode = this
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)
@@ -68,3 +69,13 @@ private fun FailResult.handleKeys(removeAllKeys: Boolean): Any =
             convertValue<ObjectNode>().removeAllKeys()
         else this
 
+class ResponseDataConfig(
+        /**
+         * 压缩数据
+         */
+        val flatten: Boolean = false,
+        /**
+         * 移除所有键
+         */
+        val removeAllKeys: Boolean = false
+)
