@@ -47,7 +47,7 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
                                     if (request.flatten) {
                                         it.flattenData()
                                     } else it
-                                }.beforeRemoveAllKeys(this)
+                                }.beforeRemoveAllKeys(this, request)
                                 .let {
                                     if (request.removeAllKeys)
                                         it.removeAllKeys()
@@ -55,7 +55,7 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
                                 }
                     }
 
-    protected open fun ObjectNode.beforeRemoveAllKeys(result: Result): ObjectNode = this
+    protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, request: ServerHttpRequest): ObjectNode = this
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)
