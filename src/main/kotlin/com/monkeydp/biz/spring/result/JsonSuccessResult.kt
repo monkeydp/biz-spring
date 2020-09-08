@@ -1,17 +1,18 @@
 package com.monkeydp.biz.spring.result
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonUnwrapped
 import com.fasterxml.jackson.annotation.JsonView
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.monkeydp.biz.spring.config.kodein
-import com.monkeydp.biz.spring.crud.Paging
 import com.monkeydp.biz.spring.crud.Table
+import com.monkeydp.tools.exception.ierror
 import com.monkeydp.tools.ext.jackson.JsonFlatten
 import com.monkeydp.tools.ext.jackson.JsonFlattener
+import com.monkeydp.tools.ext.jackson.getByPath
 import com.monkeydp.tools.ext.kotlin.findAnnotOrNull
 import org.kodein.di.generic.instance
 import org.springframework.core.MethodParameter
@@ -31,9 +32,8 @@ interface JsonSuccessResult<T> : SuccessResult<T> {
     }
 }
 
-private class JsonSuccessResultImpl<T>(
-        @JsonUnwrapped
-        override val data: T,
+class JsonSuccessResultImpl<T>(
+        data: T,
         @JsonIgnore
         private val returnType: MethodParameter
 ) : JsonSuccessResult<T>, AbstractSuccessResult<T>(data) {
@@ -63,35 +63,45 @@ private class JsonSuccessResultImpl<T>(
 
     override fun ObjectNode.assignColumns(): ObjectNode {
         when (data) {
-            is Table<*> -> assignPagingColumns()
+            is Table<*> -> assignTableColumns()
         }
         return this
     }
 
-    private fun ObjectNode.assignPagingColumns(): ObjectNode {
+    private fun ObjectNode.assignTableColumns(): ObjectNode {
         if (data !is Table<*>) return this
-        val content = get(data::content.name)
+        val content = getContent()
         val columns = if (content.isEmpty) 0 else content.first().size()
         set<IntNode>(data::columns.name, IntNode(columns))
         return this
     }
 
+    private fun ObjectNode.getContent(): JsonNode {
+        checkIsTable()
+        data as Table<*>
+        return getByPath(pathToContent())!!
+    }
+
+    private fun checkIsTable() {
+        if (data !is Table<*>)
+            ierror("Only support Table, current data is ${data}")
+    }
+
+    private fun pathToContent(): String {
+        checkIsTable()
+        data as Table<*>
+        return "${::data.name}.${data::content.name}"
+    }
+
     override fun ObjectNode.flattenData(): ObjectNode =
             when (data) {
-                is Paging<*> -> flattenPagingData()
                 is Table<*> -> flattenTableData()
                 else -> this
             }
 
-    private fun ObjectNode.flattenPagingData(): ObjectNode {
-        if (data !is Paging<*>) return this
-        val jsonFlatten: JsonFlatten? = data::content.findAnnotOrNull<JsonFlatten>()
-        return JsonFlattener.flattenData(this, data::content.name, jsonFlatten)
-    }
-
     private fun ObjectNode.flattenTableData(): ObjectNode {
         if (data !is Table<*>) return this
         val jsonFlatten: JsonFlatten? = data::content.findAnnotOrNull<JsonFlatten>()
-        return JsonFlattener.flattenData(this, data::content.name, jsonFlatten)
+        return JsonFlattener.flattenData(this, pathToContent(), jsonFlatten)
     }
 }

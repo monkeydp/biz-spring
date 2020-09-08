@@ -4,6 +4,7 @@ import com.monkeydp.biz.spring.result.SuccessResult.Companion.SUCCESS_CODE
 import com.monkeydp.tools.ext.kotlin.singleton
 import com.monkeydp.tools.ext.kotlin.toDataString
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty1
 
 /**
  * @author iPotato-Work
@@ -14,11 +15,12 @@ interface Result {
 }
 
 abstract class AbstractResult : Result {
+    protected open val showProps:List<KProperty1<out Result, *>> = listOf(Result::code)
     override fun toString() =
-            toDataString()
+            toDataString(showProps = showProps)
 }
 
-class StdResult<T : Any>(
+class ResultImpl<T : Any>(
         override val code: String
 ) : AbstractResult() {
 

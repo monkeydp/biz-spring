@@ -2,7 +2,6 @@ package com.monkeydp.biz.spring.crud
 
 import com.monkeydp.biz.spring.crud.Table.Companion.INVALID_COLUMNS
 import com.monkeydp.tools.ext.jackson.JsonFlatten
-import com.monkeydp.tools.ext.jackson.JsonFlatten.Times.TWO
 import com.monkeydp.tools.ext.swagger.ApiFixedPosition
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
@@ -32,7 +31,6 @@ data class Paging<T>(
         @ApiModelProperty("当前页记录列数", example = "3")
         override var columns: Int = INVALID_COLUMNS,
 
-        @JsonFlatten(TWO)
         @ApiModelProperty("记录数据")
         override val content: Collection<T>
 ) : Table<T> {

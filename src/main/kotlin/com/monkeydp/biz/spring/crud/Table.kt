@@ -2,7 +2,6 @@ package com.monkeydp.biz.spring.crud
 
 import com.monkeydp.biz.spring.crud.Table.Companion.INVALID_COLUMNS
 import com.monkeydp.tools.ext.jackson.JsonFlatten
-import com.monkeydp.tools.ext.jackson.JsonFlatten.Times.TWO
 import com.monkeydp.tools.ext.swagger.ApiFixedPosition
 
 /**
@@ -10,6 +9,7 @@ import com.monkeydp.tools.ext.swagger.ApiFixedPosition
  * @date 2020/6/4
  */
 interface Table<T> {
+    @JsonFlatten
     val content: Collection<T>
     val rows: Int
     val columns: Int
@@ -23,7 +23,6 @@ interface Table<T> {
 
 @ApiFixedPosition
 class TableImpl<T>(
-        @JsonFlatten(TWO)
         override val content: Collection<T>
 ) : Table<T> {
     override val rows = content.size

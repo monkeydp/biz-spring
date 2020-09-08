@@ -1,7 +1,7 @@
 package com.monkeydp.biz.spring.http
 
 import com.monkeydp.biz.spring.ext.spring.web.client.request
-import com.monkeydp.biz.spring.result.StdResult
+import com.monkeydp.biz.spring.result.ResultImpl
 import com.monkeydp.biz.spring.result.failerr
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpMethod.GET
@@ -22,7 +22,7 @@ class BizHttp(
             request<D>(url, POST, data)
 
     inline fun <reified D : Any> request(url: String, method: HttpMethod, data: Any? = null): D {
-        val resp = restTemplate.request<StdResult<D>>(url, method, data)
+        val resp = restTemplate.request<ResultImpl<D>>(url, method, data)
         val result = resp.body!!
         if (result.success)
             return result.successResult.data

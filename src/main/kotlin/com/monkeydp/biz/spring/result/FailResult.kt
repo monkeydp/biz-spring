@@ -53,6 +53,9 @@ abstract class AbstractFailResult(
         if (cause != null)
             logger.error(cause)
     }
+
+    protected override val showProps =
+            listOf(FailResult::code, FailResult::msg)
 }
 
 private class FailedResultImpl : AbstractFailResult {

@@ -13,13 +13,16 @@ interface SuccessResult<T> : Result {
     companion object {
         const val SUCCESS_CODE = "200"
         operator fun <T> invoke(data: T): SuccessResult<T> =
-                StdSuccessResult(data)
+                SuccessResultImpl(data)
     }
 }
 
 @JsonPropertyOrder("code", "data")
 abstract class AbstractSuccessResult<T>(
         override val data: T
-) : SuccessResult<T>, AbstractResult()
+) : SuccessResult<T>, AbstractResult() {
+    protected override val showProps =
+            listOf(SuccessResult<*>::code, SuccessResult<*>::data)
+}
 
-private class StdSuccessResult<T>(data: T) : AbstractSuccessResult<T>(data)
+private class SuccessResultImpl<T>(data: T) : AbstractSuccessResult<T>(data)
