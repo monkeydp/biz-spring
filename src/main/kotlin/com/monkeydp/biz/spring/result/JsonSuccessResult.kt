@@ -13,6 +13,7 @@ import com.monkeydp.tools.exception.ierror
 import com.monkeydp.tools.ext.jackson.JsonFlatten
 import com.monkeydp.tools.ext.jackson.JsonFlattener
 import com.monkeydp.tools.ext.jackson.getByPath
+import com.monkeydp.tools.ext.jackson.replaceByPath
 import com.monkeydp.tools.ext.kotlin.findAnnotOrNull
 import org.kodein.di.generic.instance
 import org.springframework.core.MethodParameter
@@ -72,7 +73,7 @@ class JsonSuccessResultImpl<T>(
         if (data !is Table<*>) return this
         val content = getContent()
         val columns = if (content.isEmpty) 0 else content.first().size()
-        set<IntNode>(data::columns.name, IntNode(columns))
+        replaceByPath(listOf(::data.name, data::columns.name), IntNode(columns))
         return this
     }
 
