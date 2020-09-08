@@ -9,10 +9,10 @@ import com.monkeydp.tools.ext.swagger.ApiFixedPosition
  * @date 2020/6/4
  */
 interface Table<T> {
-    @JsonFlatten
-    val content: Collection<T>
     val rows: Int
     val columns: Int
+    @JsonFlatten
+    val content: Collection<T>
 
     companion object {
         const val INVALID_COLUMNS = -1
