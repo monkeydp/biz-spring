@@ -1,4 +1,4 @@
-package com.moonlight.sk.be.config
+package com.monkeydp.biz.spring.ext.spring.jackson
 
 import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
