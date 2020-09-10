@@ -12,6 +12,7 @@ java.sourceCompatibility = VERSION_1_8
 java.targetCompatibility = VERSION_1_8
 
 val springVersion = "5.2.6.RELEASE"
+val springBootVersion = "2.2.7.RELEASE"
 
 dependencies {
     // kotlin
@@ -22,6 +23,7 @@ dependencies {
 
     implementation("org.springframework:spring-aspects:$springVersion")
     implementation("org.springframework:spring-messaging:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
     api("org.springframework:spring-webmvc:$springVersion")
 
     implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
