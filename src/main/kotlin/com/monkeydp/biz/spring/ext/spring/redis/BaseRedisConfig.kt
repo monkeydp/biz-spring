@@ -15,7 +15,7 @@ import java.io.Serializable
  */
 abstract class BaseRedisConfig {
     @Bean
-    fun redisTemplate(factory: RedisConnectionFactory) =
+    open fun redisTemplate(factory: RedisConnectionFactory) =
             RedisTemplate<String, Serializable>()
                     .apply {
                         setConnectionFactory(factory)
