@@ -56,6 +56,10 @@ interface CrudService<E, ID> {
     fun has(spec: Specification<E>): Boolean
 
     fun has(spec: () -> Specification<E>): Boolean
+
+    fun hasNo(spec: Specification<E>): Boolean
+
+    fun hasNo(spec: () -> Specification<E>): Boolean
 }
 
 abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudService<E, ID> {
@@ -139,8 +143,14 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun has(spec: Specification<E>) =
             findAll(spec).isNotEmpty()
 
-    override fun has(spec: () -> Specification<E>): Boolean =
+    override fun has(spec: () -> Specification<E>) =
             has(spec())
+
+    override fun hasNo(spec: Specification<E>) =
+            !has(spec)
+
+    override fun hasNo(spec: () -> Specification<E>)=
+            !has(spec)
 
     abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*>): DataNotFoundEx
 }
