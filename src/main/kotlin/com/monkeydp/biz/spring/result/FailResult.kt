@@ -111,7 +111,7 @@ open class BizFailedResult(
             logLevel = cause.logLevel
     )
 
-    constructor(info: ResultInfo, cause: Throwable, logLevel: LogLevel = DEFAULT_LOG_LEVEL) : this(
+    constructor(info: ResultInfo, cause: Throwable? = null, logLevel: LogLevel = DEFAULT_LOG_LEVEL) : this(
             code = info.code,
             msg = info.msgPattern,
             cause = cause,
