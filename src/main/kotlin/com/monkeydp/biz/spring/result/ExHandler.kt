@@ -47,5 +47,5 @@ object ExHandler {
             InnerFailedResult(ex)
 
     fun handle(ex: Exception) =
-            FailResult(resultInfo = INNER_ERROR, cause = ex)
+            FailResult(code = INNER_ERROR.code, cause = ex)
 }

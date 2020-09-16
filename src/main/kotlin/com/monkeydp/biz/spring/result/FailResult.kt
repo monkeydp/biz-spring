@@ -8,7 +8,10 @@ import com.monkeydp.biz.spring.result.CommonInfo.ARGUMENT_ILLEGAL
 import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
 import com.monkeydp.tools.exception.ierror
 import com.monkeydp.tools.exception.inner.InnerEx
-import com.monkeydp.tools.ext.logger.*
+import com.monkeydp.tools.ext.logger.LogLevel
+import com.monkeydp.tools.ext.logger.debug
+import com.monkeydp.tools.ext.logger.getLogger
+import com.monkeydp.tools.ext.logger.log
 import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 
@@ -30,10 +33,10 @@ interface FailResult : Result {
                 invoke(code.toString(), msg)
 
         operator fun invoke(
-                resultInfo: ResultInfo,
+                code:String,
                 cause: Throwable
         ): FailResult =
-                FailedResultImpl(resultInfo = resultInfo, cause = cause)
+                FailedResultImpl(code, cause = cause)
     }
 }
 
@@ -49,12 +52,9 @@ abstract class AbstractFailResult(
 
     constructor(resultInfo: ResultInfo) : this(resultInfo.code, resultInfo.msgPattern)
     constructor (
-            resultInfo: ResultInfo,
-            cause: Throwable? = null
-    ) : this(resultInfo.code, resultInfo.msgPattern) {
-        if (cause != null)
-            logger.error(cause)
-    }
+            code: String,
+            cause: Throwable
+    ) : this(code, cause.message ?: "<无错误信息>")
 
     protected override val showProps =
             listOf(FailResult::code, FailResult::msg)
@@ -72,9 +72,9 @@ private class FailedResultImpl : AbstractFailResult {
 
     constructor(code: String, msg: String) : super(code, msg)
     constructor (
-            resultInfo: ResultInfo,
-            cause: Throwable? = null
-    ) : super(resultInfo, cause)
+            code: String,
+            cause: Throwable
+    ) : super(code, cause)
 }
 
 open class InnerFailedResult(
