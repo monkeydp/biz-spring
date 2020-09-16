@@ -2,10 +2,9 @@ package com.monkeydp.biz.spring.http
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.monkeydp.biz.spring.env.SpringProps
-import com.monkeydp.biz.spring.result.ExHandler
-import com.monkeydp.biz.spring.result.FailResult
-import com.monkeydp.biz.spring.result.JsonSuccessResult
-import com.monkeydp.biz.spring.result.Result
+import com.monkeydp.biz.spring.ex.BizEx
+import com.monkeydp.biz.spring.result.*
+import com.monkeydp.biz.spring.sms.SmsSendEx
 import com.monkeydp.tools.exception.inner.InnerEx
 import com.monkeydp.tools.ext.jackson.convertValue
 import com.monkeydp.tools.ext.jackson.removeAllKeys
@@ -17,6 +16,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.validation.BindException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
@@ -64,6 +65,31 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, cfg: ResponseDataConfig): ObjectNode = this
 
     @ResponseBody
+    @ExceptionHandler(SmsSendEx::class)
+    open fun handle(ex: SmsSendEx): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(FailEx::class)
+    open fun handle(ex: FailEx): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    open fun handle(ex: MethodArgumentNotValidException): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(BindException::class)
+    open fun handle(ex: BindException): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
+    @ExceptionHandler(BizEx::class)
+    open fun handle(ex: BizEx): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
     @ExceptionHandler(InnerEx::class)
     open fun handle(ex: InnerEx): FailResult =
             ExHandler.handle(ex)
@@ -74,11 +100,6 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     open fun handle(ex: Exception): FailResult =
             ExHandler.handle(ex)
                     .apply { if (profiles.gtDev()) hideMsg() }
-
-    @ResponseBody
-    @ExceptionHandler(Throwable::class)
-    open fun handle(throwable: Throwable): FailResult =
-            ExHandler.handle(throwable)
 }
 
 private fun FailResult.handleKeys(removeAllKeys: Boolean): Any =
