@@ -47,6 +47,8 @@ interface CrudService<E, ID> {
 
     fun deleteMaybeNull(spec: Specification<E>)
 
+    fun deleteAll(entities: List<E>)
+
     fun deleteAll(spec: Specification<E>)
 
     fun count(): Long
@@ -131,8 +133,11 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
         entity?.run(::delete)
     }
 
+    override fun deleteAll(entities: List<E>) =
+            repo.deleteAll(entities)
+
     override fun deleteAll(spec: Specification<E>) =
-            repo.deleteAll(findAll(spec))
+            deleteAll(findAll(spec))
 
     override fun count(): Long =
             repo.count()
@@ -149,7 +154,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun hasNo(spec: Specification<E>) =
             !has(spec)
 
-    override fun hasNo(spec: () -> Specification<E>)=
+    override fun hasNo(spec: () -> Specification<E>) =
             !has(spec)
 
     abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*>): DataNotFoundEx
