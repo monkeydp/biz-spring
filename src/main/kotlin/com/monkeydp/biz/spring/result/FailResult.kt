@@ -20,6 +20,8 @@ interface FailResult : Result {
     override val code: String
     val msg: String
 
+    fun hideMsg()
+
     companion object {
         operator fun invoke(code: String, msg: String): FailResult =
                 FailedResultImpl(code = code, msg = msg)
@@ -56,6 +58,11 @@ abstract class AbstractFailResult(
 
     protected override val showProps =
             listOf(FailResult::code, FailResult::msg)
+
+    override fun hideMsg() {
+        logger.info("隐藏内部错误信息, 原失败结果: $this")
+        this.msg = "内部错误"
+    }
 }
 
 private class FailedResultImpl : AbstractFailResult {
@@ -84,11 +91,6 @@ open class InnerFailedResult(
                 else -> logger.log(logLevel, cause)
             }
         }
-    }
-
-    fun hideMsg() {
-        logger.info("隐藏内部错误信息, 原失败结果: $this")
-        this.msg = "内部错误"
     }
 }
 

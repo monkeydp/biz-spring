@@ -22,7 +22,7 @@ interface Profiles {
     fun isDev() = active == DEV
     fun isNotDev() = !isDev()
     fun lteDev() = isLocal() || isDev()
-    fun gteDev() = !isLocal() && !isDev()
+    fun gtDev() = !isLocal() && !isDev()
 
     fun isTest() = active == TEST
     fun isNotTest() = !isTest()

@@ -6,10 +6,11 @@ import com.monkeydp.biz.spring.result.ExHandler
 import com.monkeydp.biz.spring.result.FailResult
 import com.monkeydp.biz.spring.result.JsonSuccessResult
 import com.monkeydp.biz.spring.result.Result
-import com.monkeydp.tools.ext.jackson.removeAllKeys
+import com.monkeydp.tools.exception.inner.InnerEx
 import com.monkeydp.tools.ext.jackson.convertValue
-import com.monkeydp.tools.ext.kotlin.singleton
+import com.monkeydp.tools.ext.jackson.removeAllKeys
 import com.monkeydp.tools.ext.jackson.toJson
+import com.monkeydp.tools.ext.kotlin.singleton
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
@@ -30,6 +31,10 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
 
     @set:Autowired
     private var springProps: SpringProps by Delegates.singleton()
+
+    private val profiles by lazy {
+        springProps.profiles
+    }
 
     @set:Autowired
     private var request: HttpServletRequest by Delegates.singleton()
@@ -57,6 +62,18 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
                     }
 
     protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, cfg: ResponseDataConfig): ObjectNode = this
+
+    @ResponseBody
+    @ExceptionHandler(InnerEx::class)
+    open fun handle(ex: InnerEx): FailResult =
+            ExHandler.handle(ex)
+                    .apply { if (profiles.gtDev()) hideMsg() }
+
+    @ResponseBody
+    @ExceptionHandler(Exception::class)
+    open fun handle(ex: Exception): FailResult =
+            ExHandler.handle(ex)
+                    .apply { if (profiles.gtDev()) hideMsg() }
 
     @ResponseBody
     @ExceptionHandler(Throwable::class)
