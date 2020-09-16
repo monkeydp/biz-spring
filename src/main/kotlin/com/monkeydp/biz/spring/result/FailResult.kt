@@ -33,7 +33,7 @@ interface FailResult : Result {
                 invoke(code.toString(), msg)
 
         operator fun invoke(
-                code:String,
+                code: String,
                 cause: Throwable
         ): FailResult =
                 FailedResultImpl(code, cause = cause)
@@ -54,7 +54,9 @@ abstract class AbstractFailResult(
     constructor (
             code: String,
             cause: Throwable
-    ) : this(code, cause.message ?: "<无错误信息>")
+    ) : this(code, cause.message ?: "<无错误信息>") {
+        cause.printStackTrace()
+    }
 
     protected override val showProps =
             listOf(FailResult::code, FailResult::msg)
