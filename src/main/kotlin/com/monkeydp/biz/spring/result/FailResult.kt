@@ -131,7 +131,8 @@ open class BizFailedResult(
                 append("${code} - ${msg}")
                 cause?.let {
                     if (cause is InnerEx || cause is BizEx)
-                        append("- ${it.message}")
+                        if (it.message != msg)
+                            append(" - ${it.message}")
                 }
             }.toString()
 }
