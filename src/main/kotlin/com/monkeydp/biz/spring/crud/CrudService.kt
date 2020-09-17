@@ -67,7 +67,7 @@ interface CrudService<E, ID> {
 abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudService<E, ID> {
 
     @set:Autowired
-    private var repo: R by Delegates.singleton()
+    protected var repo: R by Delegates.singleton()
 
     private val entityClass: KClass<E> = TypeUtil.getGenericType<Class<E>>(this).kotlin
 
