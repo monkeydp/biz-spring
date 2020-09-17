@@ -4,7 +4,7 @@ package com.monkeydp.biz.spring.result
  * @author iPotato-Work
  * @date 2020/5/15
  */
-enum class CommonInfo(
+enum class CommonErrorInfo(
         override val code: String,
         override val msgPattern: String
 ) : ResultInfo {

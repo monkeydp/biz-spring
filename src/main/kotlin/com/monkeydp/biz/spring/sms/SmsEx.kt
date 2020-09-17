@@ -2,7 +2,7 @@ package com.monkeydp.biz.spring.sms
 
 import com.aliyuncs.exceptions.ClientException
 import com.monkeydp.biz.spring.ex.BizEx
-import com.monkeydp.biz.spring.result.CommonInfo.SMS_BUSY
+import com.monkeydp.biz.spring.result.CommonErrorInfo.SMS_BUSY
 
 /**
  * @author iPotato-Work

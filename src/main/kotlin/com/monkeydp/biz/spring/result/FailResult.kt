@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.ex.BizEx.Companion.DEFAULT_LOG_LEVEL
-import com.monkeydp.biz.spring.result.CommonInfo.ARGUMENT_ILLEGAL
-import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
+import com.monkeydp.biz.spring.result.CommonErrorInfo.ARGUMENT_ILLEGAL
+import com.monkeydp.biz.spring.result.CommonErrorInfo.INNER_ERROR
 import com.monkeydp.tools.exception.ierror
 import com.monkeydp.tools.exception.inner.InnerEx
 import com.monkeydp.tools.ext.logger.LogLevel

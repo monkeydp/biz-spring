@@ -1,7 +1,7 @@
 package com.monkeydp.biz.spring.result
 
 import com.monkeydp.biz.spring.ex.BizEx
-import com.monkeydp.biz.spring.result.CommonInfo.INNER_ERROR
+import com.monkeydp.biz.spring.result.CommonErrorInfo.INNER_ERROR
 import com.monkeydp.biz.spring.sms.SmsBusyEx
 import com.monkeydp.biz.spring.sms.SmsSendEx
 import com.monkeydp.tools.exception.ierror
