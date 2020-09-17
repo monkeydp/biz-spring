@@ -134,7 +134,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     }
 
     override fun deleteAll(entities: List<E>) =
-            repo.deleteAll(entities)
+            entities.forEach { delete(it) }
 
     override fun deleteAll(spec: Specification<E>) =
             deleteAll(findAll(spec))
