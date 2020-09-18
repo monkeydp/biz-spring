@@ -15,10 +15,6 @@ val springVersion = "5.2.6.RELEASE"
 val springBootVersion = "2.2.7.RELEASE"
 
 dependencies {
-    // kotlin
-    implementation(kotlin("reflect"))
-    implementation(kotlin("stdlib-jdk8"))
-
     api("com.monkeydp:tools:1.1.1.RELEASE")
 
     implementation("org.springframework:spring-aspects:$springVersion")
