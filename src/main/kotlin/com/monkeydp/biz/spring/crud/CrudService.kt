@@ -25,7 +25,7 @@ interface CrudService<E, ID> {
 
     fun findById(id: ID): E
 
-    fun findByIdOrNull(id: ID): E?
+    fun findByIdOrNull(id: ID?): E?
 
     fun findAll(query: AllQuery = AllQuery()): List<E>
 
@@ -87,8 +87,9 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
             repo.findById(id)
                     .orElseThrow { throw buildDataNotFoundEx(entityClass) }
 
-    override fun findByIdOrNull(id: ID): E? =
-            repo.findById(id)
+    override fun findByIdOrNull(id: ID?): E? =
+            if (id == null) null
+            else repo.findById(id)
                     .orElse(null)
 
     override fun findAll(query: AllQuery): List<E> =

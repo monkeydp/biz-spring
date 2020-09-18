@@ -8,3 +8,6 @@ import org.springframework.context.ApplicationContext
  */
 inline fun <reified T> ApplicationContext.getBeanX(beanName: String): T =
         getBean(beanName, T::class.java)
+
+inline fun <reified T> ApplicationContext.getBeans() =
+        getBeansOfType(T::class.java).toMap()
