@@ -39,6 +39,10 @@ interface CrudService<E, ID> {
 
     fun first(spec: Specification<E>, query: FirstQuery = FirstQuery()): E
 
+    fun firstOrNull(query: FirstQuery = FirstQuery()): E?
+
+    fun firstOrNull(spec: Specification<E>, query: FirstQuery = FirstQuery()): E?
+
     fun delete(entity: E)
 
     fun deleteById(id: ID)
@@ -77,7 +81,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
 
     override fun find(spec: Specification<E>): E =
             repo.findOne(spec)
-                    .orElseThrow { throw buildDataNotFoundEx(entityClass) }
+                    .orElseThrow { throwDataNotFoundEx() }
 
     override fun findOrNull(spec: Specification<E>): E? =
             repo.findOne(spec)
@@ -85,7 +89,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
 
     override fun findById(id: ID): E =
             repo.findById(id)
-                    .orElseThrow { throw buildDataNotFoundEx(entityClass) }
+                    .orElseThrow { throwDataNotFoundEx() }
 
     override fun findByIdOrNull(id: ID?): E? =
             if (id == null) null
@@ -106,11 +110,20 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
             repo.findAll(spec, query.pageable)
                     .run(::Paging)
 
-    override fun first(query: FirstQuery): E =
-            findAll(query).first()
+    override fun first(query: FirstQuery): E {
+        val entity = firstOrNull(query)
+        if (entity == null) throwDataNotFoundEx()
+        return entity
+    }
 
     override fun first(spec: Specification<E>, query: FirstQuery): E =
             findAll(spec, query).first()
+
+    override fun firstOrNull(query: FirstQuery): E? =
+            findAll(query).firstOrNull()
+
+    override fun firstOrNull(spec: Specification<E>, query: FirstQuery): E? =
+            findAll(spec, query).firstOrNull()
 
     override fun delete(entity: E) =
             repo.delete(entity)
@@ -125,7 +138,7 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
 
     override fun delete(spec: Specification<E>) {
         val entity = findOrNull(spec)
-        entity ?: throw buildDataNotFoundEx(entityClass)
+        entity ?: throwDataNotFoundEx()
         delete(entity)
     }
 
@@ -158,7 +171,11 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
     override fun hasNo(spec: () -> Specification<E>) =
             !has(spec)
 
-    abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*>): DataNotFoundEx
+    private fun throwDataNotFoundEx(): Nothing {
+        throw buildDataNotFoundEx()
+    }
+
+    abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*> = entityClass): DataNotFoundEx
 }
 
 abstract class DataNotFoundEx(info: ResultInfo, cause: Throwable? = null) : BizEx(info, cause)
