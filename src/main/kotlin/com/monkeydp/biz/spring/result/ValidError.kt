@@ -9,7 +9,7 @@ interface ValidError {
     val cstrName: String
     val objName: String
     val propName: String
-    val illegalValue: String
+    val illegalValue: Any
 
     companion object {
         operator fun invoke(
@@ -17,7 +17,7 @@ interface ValidError {
                 cstrName: String,
                 objName: String,
                 propName: String,
-                illegalValue: String
+                illegalValue: Any
         ): ValidError =
                 object : BaseValidError() {
                     override val message = message
@@ -34,12 +34,12 @@ abstract class BaseValidError : ValidError
 class UniqueError(
         override val objName: String,
         override val propName: String,
-        override val illegalValue: String
+        override val illegalValue: Any
 ) : BaseValidError() {
     override val message = "唯一数据已存在"
     override val cstrName = "Unique"
 
-    constructor(prop: KProperty1<*, *>, illegalValue: String) :
+    constructor(prop: KProperty1<*, *>, illegalValue: Any) :
             this(
                     objName = prop.returnType.javaType.simpleErasedName(),
                     propName = prop.name,
