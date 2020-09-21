@@ -2,7 +2,7 @@ import org.gradle.api.JavaVersion.VERSION_1_8
 
 plugins {
     // kotlin
-    val kotlinVersion = "1.3.72"
+    val kotlinVersion = "1.4.10"
     kotlin("jvm") version kotlinVersion
 }
 
@@ -19,7 +19,7 @@ dependencies {
 
     implementation("org.springframework:spring-aspects:$springVersion")
     implementation("org.springframework:spring-messaging:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:$springBootVersion")
     api("org.springframework:spring-webmvc:$springVersion")
 
     implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
