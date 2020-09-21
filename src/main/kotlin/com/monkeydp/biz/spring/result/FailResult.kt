@@ -79,7 +79,7 @@ private class FailedResultImpl : AbstractFailResult {
     ) : super(code, cause)
 }
 
-open class InnerFailedResult(
+open class InnerFailResult(
         cause: InnerEx
 ) : AbstractFailResult(INNER_ERROR.code, cause.msg) {
     companion object {
@@ -137,33 +137,41 @@ open class BizFailedResult(
             }.toString()
 }
 
-class ArgsIllegalFailedResult(
-        cause: Exception,
-        bindingResult: BindingResult?
+class ArgsIllegalResult(
+        val validErrors: List<ValidError>,
+        cause: Exception
 ) : AbstractFailResult(ARGUMENT_ILLEGAL) {
 
     companion object {
         private val logger = getLogger()
     }
 
+    constructor(ex: ArgsIllegalEx) : this(
+            validErrors = ex.errors,
+            cause = ex
+    )
+    
+    constructor(bindingResult: BindingResult?, cause: Exception) :
+            this(
+                    validErrors = bindingResult?.run {
+                        allErrors
+                                .filterIsInstance<FieldError>()
+                                .apply { if (allErrors.size != size) ierror("存在未处理参数验证错误类型!") }
+                                .map {
+                                    ValidError(
+                                            message = it.defaultMessage ?: "<unknown>",
+                                            objName = it.objectName,
+                                            propName = it.field,
+                                            cstrName = it.code ?: "<unknown>",
+                                            illegalValue = it.rejectedValue?.toString() ?: "<unknown>"
+                                    )
+                                }
+                    }.orEmpty(),
+                    cause = cause
+            )
+
     init {
         logger.debug(cause)
     }
-
-    val validErrors: List<ValidError> =
-            bindingResult?.run {
-                allErrors
-                        .filterIsInstance<FieldError>()
-                        .apply { if (allErrors.size != size) ierror("存在未处理参数验证错误类型!") }
-                        .map {
-                            ValidError(
-                                    message = it.defaultMessage ?: "<unknown>",
-                                    objName = it.objectName,
-                                    propName = it.field,
-                                    cstrName = it.code ?: "<unknown>",
-                                    illegalValue = it.rejectedValue?.toString() ?: "<unknown>"
-                            )
-                        }
-            }.orEmpty()
 }
 

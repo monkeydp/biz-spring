@@ -35,16 +35,19 @@ object ExHandler {
             ex.result
 
     fun handle(ex: MethodArgumentNotValidException) =
-            ArgsIllegalFailedResult(ex, ex.bindingResult)
+            ArgsIllegalResult(ex.bindingResult, ex)
 
     fun handle(ex: BindException) =
-            ArgsIllegalFailedResult(ex, ex.bindingResult)
+            ArgsIllegalResult(ex.bindingResult, ex)
+
+    fun handle(ex: ArgsIllegalEx) =
+            ArgsIllegalResult(ex)
 
     fun handle(ex: BizEx) =
             BizFailedResult(ex)
 
     fun handle(ex: InnerEx) =
-            InnerFailedResult(ex)
+            InnerFailResult(ex)
 
     fun handle(ex: Exception) =
             FailResult(code = INNER_ERROR.code, cause = ex)

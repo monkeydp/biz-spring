@@ -85,6 +85,11 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
             ExHandler.handle(ex)
 
     @ResponseBody
+    @ExceptionHandler(ArgsIllegalEx::class)
+    open fun handle(ex: ArgsIllegalEx): FailResult =
+            ExHandler.handle(ex)
+
+    @ResponseBody
     @ExceptionHandler(BizEx::class)
     open fun handle(ex: BizEx): FailResult =
             ExHandler.handle(ex)
