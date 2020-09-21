@@ -1,0 +1,48 @@
+package com.monkeydp.biz.spring.result
+
+import org.kodein.di.simpleErasedName
+import kotlin.reflect.KProperty1
+import kotlin.reflect.jvm.javaType
+
+interface ValidError {
+    val message: String
+    val cstrName: String
+    val objName: String
+    val propName: String
+    val illegalValue: String
+
+    companion object {
+        operator fun invoke(
+                message: String,
+                cstrName: String,
+                objName: String,
+                propName: String,
+                illegalValue: String
+        ): ValidError =
+                object : BaseValidError() {
+                    override val message = message
+                    override val cstrName = cstrName
+                    override val objName = objName
+                    override val propName = propName
+                    override val illegalValue = illegalValue
+                }
+    }
+}
+
+abstract class BaseValidError : ValidError
+
+class UniqueError(
+        override val objName: String,
+        override val propName: String,
+        override val illegalValue: String
+) : BaseValidError() {
+    override val message = "唯一数据已存在"
+    override val cstrName = "Unique"
+
+    constructor(prop: KProperty1<*, *>, illegalValue: String) :
+            this(
+                    objName = prop.returnType.javaType.simpleErasedName(),
+                    propName = prop.name,
+                    illegalValue = illegalValue
+            )
+}

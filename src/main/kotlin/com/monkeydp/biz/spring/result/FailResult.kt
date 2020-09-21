@@ -167,10 +167,3 @@ class ArgsIllegalFailedResult(
             }.orEmpty()
 }
 
-class ValidError(
-        val message: String,
-        val cstrName: String,
-        val objName: String,
-        val propName: String,
-        val illegalValue: String
-)
