@@ -150,22 +150,14 @@ class ArgsIllegalResult(
             validErrors = ex.errors,
             cause = ex
     )
-    
+
     constructor(bindingResult: BindingResult?, cause: Exception) :
             this(
                     validErrors = bindingResult?.run {
                         allErrors
                                 .filterIsInstance<FieldError>()
                                 .apply { if (allErrors.size != size) ierror("存在未处理参数验证错误类型!") }
-                                .map {
-                                    ValidError(
-                                            message = it.defaultMessage ?: "<unknown>",
-                                            objName = it.objectName,
-                                            propName = it.field,
-                                            cstrName = it.code ?: "<unknown>",
-                                            illegalValue = it.rejectedValue?.toString() ?: "<unknown>"
-                                    )
-                                }
+                                .map { ValidError(it) }
                     }.orEmpty(),
                     cause = cause
             )

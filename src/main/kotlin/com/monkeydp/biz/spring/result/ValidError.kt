@@ -1,6 +1,7 @@
 package com.monkeydp.biz.spring.result
 
 import org.kodein.di.simpleErasedName
+import org.springframework.validation.FieldError
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaType
 
@@ -25,6 +26,17 @@ interface ValidError {
                     override val objName = objName
                     override val propName = propName
                     override val illegalValue = illegalValue
+                }
+
+        operator fun invoke(fieldError: FieldError) =
+                fieldError.run {
+                    ValidError(
+                            message = defaultMessage ?: "<unknown>",
+                            objName = objectName,
+                            propName = field,
+                            cstrName = code ?: "<unknown>",
+                            illegalValue = rejectedValue?.toString() ?: "<unknown>"
+                    )
                 }
     }
 }
