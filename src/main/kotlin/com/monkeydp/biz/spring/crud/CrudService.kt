@@ -49,7 +49,7 @@ interface CrudService<E, ID> {
 
     fun delete(spec: Specification<E>)
 
-    fun deleteMaybeNull(spec: Specification<E>)
+    fun deleteMaybeNull(spec: Specification<E>): E?
 
     fun deleteAll(entities: List<E>)
 
@@ -142,10 +142,10 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
         delete(entity)
     }
 
-    override fun deleteMaybeNull(spec: Specification<E>) {
-        val entity = findOrNull(spec)
-        entity?.run(::delete)
-    }
+    override fun deleteMaybeNull(spec: Specification<E>) =
+            findOrNull(spec)?.apply {
+                run(::delete)
+            }
 
     override fun deleteAll(entities: List<E>) =
             entities.forEach { delete(it) }
