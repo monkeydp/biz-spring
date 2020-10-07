@@ -14,17 +14,20 @@ object RegExp {
     fun az09(configInit: (Az09Config.() -> Unit)? = null): String =
             Az09Config().run {
                 configInit?.invoke(this)
-                val notAllowedPureNumber = "(?![0-9]+\$)"
-                val notAllowedPureAlphabet = "(?![a-zA-Z]+\$)"
-                val mixNumberAndAlphabet = "[0-9a-zA-Z]"
-                val range = "{$min,}"
+
                 val builder = StringBuilder()
+
                 if (!allowedPureNumber)
-                    builder.append(notAllowedPureNumber)
+                    builder.append("(?![0-9]+\$)")
+
                 if (!allowedPureAlphabet)
-                    builder.append(notAllowedPureAlphabet)
-                builder.append(mixNumberAndAlphabet)
+                    builder.append("(?![a-zA-Z]+\$)")
+
+                builder.append("[a-zA-Z0-9$allowedSymbol]")
+
+                val range = "{$min,}"
                 builder.append(range)
+
                 builder.toString()
             }
 }
@@ -38,6 +41,9 @@ class Az09Config {
 
     // 最小几位
     var min = 0
+
+    // 允许的符号
+    var allowedSymbol = ""
 }
 
 fun CharSequence.matches(pattern: String) =

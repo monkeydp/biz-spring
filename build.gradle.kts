@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.monkeydp.biz"
-version = "1.0.3.RELEASE"
+version = "1.0.3.a.RELEASE"
 java.sourceCompatibility = VERSION_1_8
 java.targetCompatibility = VERSION_1_8
 
