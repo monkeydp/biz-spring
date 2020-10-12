@@ -25,7 +25,7 @@ dependencies {
     implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
     implementation("org.hibernate:hibernate-core:5.4.15.Final")
     implementation("au.com.console:kotlin-jpa-specification-dsl:2.0.0-rc.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.10.4")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.10.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.4")
 
     implementation("com.ibm.icu:icu4j:67.1")
