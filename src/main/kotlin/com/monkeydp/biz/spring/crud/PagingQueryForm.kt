@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification
  * @author iPotato
  * @date 2020/4/27
  */
-@JsonDeserialize(`as` = PqForm::class)
 @ApiModel("分页查询表单")
 interface PagingQueryForm {
     @get:ApiModelProperty("当前页码", example = DEFAULT_CURRENT_PAGE.toString())
