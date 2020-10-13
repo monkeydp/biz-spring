@@ -39,8 +39,6 @@ dependencies {
     implementation("com.aliyun:aliyun-java-sdk-core:4.5.1")
     implementation("com.aliyun:aliyun-java-sdk-dysmsapi:1.0.0")
 
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
-
     testImplementation(kotlin("test-junit5"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.0")
 }
