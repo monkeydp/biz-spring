@@ -1,11 +1,14 @@
 package com.monkeydp.biz.spring.ext.spring.web.client
 
+import com.monkeydp.tools.ext.kotlin.toMemberPropMapX
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpMethod.GET
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
 
 /**
  * @author iPotato-Work
@@ -16,14 +19,14 @@ inline fun <reified R> RestTemplate.get(
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ) =
-        request<R>(url, HttpMethod.GET, data, headers)
+        request<R>(url, GET, data, headers)
 
 inline fun <reified R> RestTemplate.post(
         url: String,
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ) =
-        request<R>(url, HttpMethod.POST, data)
+        request<R>(url, HttpMethod.POST, data, headers)
 
 inline fun <reified R> RestTemplate.request(
         url: String,
@@ -32,6 +35,31 @@ inline fun <reified R> RestTemplate.request(
         headers: HttpHeaders = HttpHeaders(),
 ): ResponseEntity<R> {
     val typeRef = object : ParameterizedTypeReference<R>() {}
-    val entity = if (data != null) HttpEntity(data, headers) else null
-    return exchange(url, method, entity, typeRef)
+    val entity =
+            when (method) {
+                GET -> HttpEntity(headers)
+                else -> HttpEntity(data, headers)
+            }
+    println(finalUrl(url, method, data))
+    return exchange(finalUrl(url, method, data), method, entity, typeRef)
 }
+
+fun finalUrl(
+        url: String,
+        method: HttpMethod,
+        data: Any? = null,
+) =
+        if (data == null) url
+        else when (method) {
+            GET -> {
+                UriComponentsBuilder
+                        .fromHttpUrl(url)
+                        .apply {
+                            data.toMemberPropMapX<String, Any>()
+                                    .forEach {
+                                        queryParam(it.key, it.value)
+                                    }
+                        }.build().toUriString()
+            }
+            else -> url
+        }
