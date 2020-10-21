@@ -14,33 +14,32 @@ import org.springframework.web.util.UriComponentsBuilder
  * @author iPotato-Work
  * @date 2020/7/11
  */
-inline fun <reified R> RestTemplate.get(
+inline fun <reified T> RestTemplate.get(
         url: String,
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ) =
-        request<R>(url, GET, data, headers)
+        request<T>(url, GET, data, headers)
 
-inline fun <reified R> RestTemplate.post(
+inline fun <reified T> RestTemplate.post(
         url: String,
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ) =
-        request<R>(url, HttpMethod.POST, data, headers)
+        request<T>(url, HttpMethod.POST, data, headers)
 
-inline fun <reified R> RestTemplate.request(
+inline fun <reified T> RestTemplate.request(
         url: String,
         method: HttpMethod,
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
-): ResponseEntity<R> {
-    val typeRef = object : ParameterizedTypeReference<R>() {}
+): ResponseEntity<T> {
+    val typeRef = object : ParameterizedTypeReference<T>() {}
     val entity =
             when (method) {
                 GET -> HttpEntity(headers)
                 else -> HttpEntity(data, headers)
             }
-    println(finalUrl(url, method, data))
     return exchange(finalUrl(url, method, data), method, entity, typeRef)
 }
 
