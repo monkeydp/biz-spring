@@ -44,4 +44,13 @@ object SwaggerHttpHeaders {
                     .description("语言")
                     .parameterType("header")
                     .build()
+
+    val accessToken =
+            ParameterBuilder()
+                    .name(AUTHORIZATION)
+                    .modelRef(ModelRef("string"))
+                    .defaultValue("Bearer accessToken")
+                    .description("访问令牌")
+                    .parameterType("header")
+                    .build()
 }
