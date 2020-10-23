@@ -1,5 +1,6 @@
 package com.monkeydp.biz.spring.ext.spring.web.client
 
+import com.monkeydp.tools.ext.jackson.toJson
 import com.monkeydp.tools.ext.kotlin.toMemberPropMapX
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity

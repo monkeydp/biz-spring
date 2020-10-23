@@ -20,12 +20,12 @@ abstract class AbstractResult : Result {
             toDataString(showProps = showProps)
 }
 
-class ResultImpl<T : Any>(
+class ResultImpl(
         override val code: String
 ) : AbstractResult() {
 
     // exist when success
-    private var data: T by Delegates.singleton()
+    private var data: Any by Delegates.singleton()
 
     // exist when fail
     private var msg: String by Delegates.singleton()
@@ -33,7 +33,7 @@ class ResultImpl<T : Any>(
     val success =
             this.code == SUCCESS_CODE
 
-    val successResult: SuccessResult<T>
+    val successResult: SuccessResult<Any>
         get() =
             SuccessResult.invoke(data)
 
