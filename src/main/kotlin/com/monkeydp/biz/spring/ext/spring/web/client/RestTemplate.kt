@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
 
 /**
@@ -34,13 +35,12 @@ inline fun <reified T> RestTemplate.request(
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ): ResponseEntity<T> {
-    val typeRef = object : ParameterizedTypeReference<T>() {}
     val entity =
             when (method) {
                 GET -> HttpEntity(headers)
                 else -> HttpEntity(data, headers)
             }
-    return exchange(finalUrl(url, method, data), method, entity, typeRef)
+    return exchange(finalUrl(url, method, data), method, entity)
 }
 
 fun finalUrl(
