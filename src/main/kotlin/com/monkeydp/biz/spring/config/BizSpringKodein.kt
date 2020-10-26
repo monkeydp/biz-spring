@@ -14,7 +14,7 @@ val bizSpringKodeinModule = Kodein.Module("bizSpringKodeinModule") {
     importAll(*reverseModuleArray, allowOverride = true)
 }
 
-internal val kodein = Kodein {
+internal val kodein = Kodein.lazy {
     import(bizSpringKodeinModule, allowOverride = true)
     BizSpringKMContainer.logRegistered(*reverseModuleArray)
 }
