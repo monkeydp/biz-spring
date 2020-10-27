@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort
  * @author iPotato-Work
  * @date 2020/8/11
  */
-interface ListQuery {
+interface ListQuery : Query {
     val sort: Sort
 
     companion object {
