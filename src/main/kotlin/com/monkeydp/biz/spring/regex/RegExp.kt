@@ -2,6 +2,7 @@ package com.monkeydp.biz.spring.regex
 
 import com.monkeydp.biz.spring.regex.RegExp.EMAIL
 import com.monkeydp.biz.spring.regex.RegExp.MOBILE
+import java.util.regex.Pattern
 
 /**
  * @author iPotato-Work
@@ -10,6 +11,7 @@ import com.monkeydp.biz.spring.regex.RegExp.MOBILE
 object RegExp {
     const val MOBILE = "^1[3456789]\\d{9}\$"
     const val EMAIL = "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+\$"
+    val p = Pattern.compile("d[1-9][0-9]*_.*")
 
     fun az09(configInit: (Az09Config.() -> Unit)? = null): String =
             Az09Config().run {
