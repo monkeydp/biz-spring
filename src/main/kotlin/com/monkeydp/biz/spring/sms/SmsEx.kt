@@ -3,6 +3,7 @@ package com.monkeydp.biz.spring.sms
 import com.aliyuncs.exceptions.ClientException
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.CommonErrorInfo.SMS_BUSY
+import com.monkeydp.tools.ext.logger.getLogger
 
 /**
  * @author iPotato-Work
@@ -15,4 +16,13 @@ open class SmsSendEx(
 
 class SmsBusyEx(
         cause: Throwable? = null
-) : BizEx(SMS_BUSY, cause)
+) : BizEx(SMS_BUSY, cause) {
+
+    companion object {
+        private val logger = getLogger()
+    }
+
+    init {
+        cause?.message?.run(logger::error)
+    }
+}
