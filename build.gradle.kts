@@ -15,7 +15,7 @@ val springVersion = "5.2.6.RELEASE"
 val springBootVersion = "2.2.7.RELEASE"
 
 dependencies {
-    api("com.monkeydp:tools:1.1.4.RELEASE")
+    api("com.monkeydp:tools:1.1.5-SNAPSHOT")
 
     implementation("org.springframework:spring-aspects:$springVersion")
     implementation("org.springframework:spring-messaging:$springVersion")
