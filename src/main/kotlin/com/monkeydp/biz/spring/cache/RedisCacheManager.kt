@@ -4,6 +4,7 @@ import com.monkeydp.biz.spring.ext.spring.redis.expire
 import com.monkeydp.tools.ext.jackson.convertValue
 import com.monkeydp.tools.ext.kotlin.singleton
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.redis.core.RedisTemplate
 import java.io.Serializable
 import java.time.Duration
@@ -17,6 +18,7 @@ import kotlin.reflect.KClass
  */
 class RedisCacheManager : BaseCacheManager() {
 
+    @set:Lazy
     @set:Autowired
     private var redisTemplate: RedisTemplate<String, Serializable> by Delegates.singleton()
 
