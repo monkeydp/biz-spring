@@ -1,6 +1,5 @@
 package com.monkeydp.biz.spring.crud
 
-import com.monkeydp.biz.spring.entity.Entity
 import org.springframework.data.domain.Sort
 
 /**
@@ -12,7 +11,7 @@ interface ListQuery : Query {
 
     companion object {
         val DEFAULT_SORT =
-                Sort.by(Entity::createdAt.name)
+                Sort.by("id")
                         .descending()
     }
 }
