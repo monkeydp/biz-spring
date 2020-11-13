@@ -1,8 +1,6 @@
 package com.monkeydp.biz.spring.ext.spring.web.client
 
-import com.monkeydp.tools.ext.jackson.toJson
 import com.monkeydp.tools.ext.kotlin.toMemberPropMapX
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -36,30 +34,28 @@ inline fun <reified T> RestTemplate.request(
         data: Any? = null,
         headers: HttpHeaders = HttpHeaders(),
 ): ResponseEntity<T> {
-    val entity =
-            when (method) {
-                GET -> HttpEntity(headers)
-                else -> HttpEntity(data, headers)
-            }
-    return exchange(finalUrl(url, method, data), method, entity)
+    val finalUrl: String
+    val entity: HttpEntity<Any>
+    if (method == GET) {
+        finalUrl = appendQueryParams(url, data)
+        entity = HttpEntity(headers)
+    } else {
+        finalUrl = url
+        entity = HttpEntity(data, headers)
+    }
+    return exchange(finalUrl, method, entity)
 }
 
-fun finalUrl(
+fun appendQueryParams(
         url: String,
-        method: HttpMethod,
         data: Any? = null,
 ) =
         if (data == null) url
-        else when (method) {
-            GET -> {
-                UriComponentsBuilder
-                        .fromHttpUrl(url)
-                        .apply {
-                            data.toMemberPropMapX<String, Any>()
-                                    .forEach {
-                                        queryParam(it.key, it.value)
-                                    }
-                        }.build().toUriString()
-            }
-            else -> url
-        }
+        else UriComponentsBuilder
+                .fromHttpUrl(url)
+                .apply {
+                    data.toMemberPropMapX<String, Any>()
+                            .forEach {
+                                queryParam(it.key, it.value)
+                            }
+                }.build().toUriString()
