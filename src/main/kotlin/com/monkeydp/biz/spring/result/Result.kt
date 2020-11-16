@@ -35,7 +35,7 @@ class ResultImpl(
 
     val successResult: SuccessResult<Any>
         get() =
-            SuccessResult.invoke(data)
+            SuccessResult(data)
 
     val failedResult: FailResult
         get() =
