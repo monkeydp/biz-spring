@@ -138,7 +138,7 @@ open class BizFailedResult(
 }
 
 class ArgsIllegalResult(
-        val validErrors: List<ValidError>,
+        val validErrors: Map<Any, List<ValidError>>,
         cause: Exception
 ) : AbstractFailResult(ARGUMENT_ILLEGAL) {
 
@@ -147,7 +147,7 @@ class ArgsIllegalResult(
     }
 
     constructor(ex: ArgsIllegalEx) : this(
-            validErrors = ex.errors,
+            validErrors = ex.errors.groupByIllegalValue(),
             cause = ex
     )
 
@@ -158,6 +158,9 @@ class ArgsIllegalResult(
                                 .filterIsInstance<FieldError>()
                                 .apply { if (allErrors.size != size) ierror("存在未处理参数验证错误类型!") }
                                 .map { ValidError(it) }
+                                .toList()
+                                .groupByIllegalValue()
+                                .toMap()
                     }.orEmpty(),
                     cause = cause
             )

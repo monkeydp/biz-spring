@@ -58,3 +58,6 @@ class UniqueError(
                     illegalValue = illegalValue
             )
 }
+
+fun Collection<ValidError>.groupByIllegalValue() =
+        groupBy { it.illegalValue }
