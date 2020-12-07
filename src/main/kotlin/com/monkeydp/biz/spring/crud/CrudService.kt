@@ -1,5 +1,6 @@
 package com.monkeydp.biz.spring.crud
 
+import au.com.console.jpaspecificationdsl.where
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.ResultInfo
 import com.monkeydp.tools.ext.kotlin.singleton
@@ -10,6 +11,9 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
+import javax.persistence.criteria.CriteriaBuilder
+import javax.persistence.criteria.Predicate
+import javax.persistence.criteria.Root
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 
@@ -21,7 +25,11 @@ interface CrudService<E, ID> {
 
     fun find(spec: Specification<E>): E
 
+    fun find(makePredicate: CriteriaBuilder.(Root<E>) -> Predicate): E
+
     fun findOrNull(spec: Specification<E>): E?
+
+    fun findOrNull(makePredicate: CriteriaBuilder.(Root<E>) -> Predicate): E?
 
     fun findById(id: ID): E
 
@@ -68,7 +76,7 @@ interface CrudService<E, ID> {
     fun hasNo(spec: () -> Specification<E>): Boolean
 }
 
-abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudService<E, ID> {
+abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : CrudService<E, ID> {
 
     @set:Autowired
     protected var repo: R by Delegates.singleton()
@@ -83,9 +91,15 @@ abstract class AbstractCrudService<E : Any, ID, R : CrudRepo<E, ID>> : CrudServi
             repo.findOne(spec)
                     .orElseThrow { throwDataNotFoundEx() }
 
+    override fun find(makePredicate: CriteriaBuilder.(Root<E>) -> Predicate) =
+            find(where(makePredicate))
+
     override fun findOrNull(spec: Specification<E>): E? =
             repo.findOne(spec)
                     .orElse(null)
+
+    override fun findOrNull(makePredicate: CriteriaBuilder.(Root<E>) -> Predicate) =
+            findOrNull(where(makePredicate))
 
     override fun findById(id: ID): E =
             repo.findById(id)
