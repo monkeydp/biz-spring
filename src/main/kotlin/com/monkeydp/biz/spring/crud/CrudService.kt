@@ -59,9 +59,16 @@ interface CrudService<E, ID> {
 
     fun deleteMaybeNull(spec: Specification<E>): E?
 
+    /**
+     * 不是批量操作
+     */
     fun deleteAll(entities: List<E>)
 
     fun deleteAll(spec: Specification<E>)
+
+    fun deleteInBatch(entities: List<E>)
+
+    fun deleteInBatch(spec: Specification<E>)
 
     fun count(): Long
 
@@ -161,11 +168,20 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
                 run(::delete)
             }
 
-    override fun deleteAll(entities: List<E>) =
-            entities.forEach { delete(it) }
+    override fun deleteAll(entities: List<E>) {
+        repo.deleteAll(entities)
+    }
 
     override fun deleteAll(spec: Specification<E>) =
             deleteAll(findAll(spec))
+
+    override fun deleteInBatch(entities: List<E>) {
+        repo.deleteInBatch(entities)
+    }
+
+    override fun deleteInBatch(spec: Specification<E>) {
+        deleteInBatch(findAll(spec))
+    }
 
     override fun count(): Long =
             repo.count()
