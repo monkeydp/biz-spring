@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
@@ -146,9 +147,11 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
     override fun firstOrNull(spec: Specification<E>, query: FirstQuery): E? =
             findAll(spec, query).firstOrNull()
 
+    @Transactional
     override fun delete(entity: E) =
             repo.delete(entity)
 
+    @Transactional
     override fun deleteById(id: ID) {
         try {
             delete(findById(id))
@@ -157,28 +160,34 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
         }
     }
 
+    @Transactional
     override fun delete(spec: Specification<E>) {
         val entity = findOrNull(spec)
         entity ?: throwDataNotFoundEx()
         delete(entity)
     }
 
+    @Transactional
     override fun deleteMaybeNull(spec: Specification<E>) =
             findOrNull(spec)?.apply {
                 run(::delete)
             }
 
+    @Transactional
     override fun deleteAll(entities: List<E>) {
         repo.deleteAll(entities)
     }
 
+    @Transactional
     override fun deleteAll(spec: Specification<E>) =
             deleteAll(findAll(spec))
 
+    @Transactional
     override fun deleteInBatch(entities: List<E>) {
         repo.deleteInBatch(entities)
     }
 
+    @Transactional
     override fun deleteInBatch(spec: Specification<E>) {
         deleteInBatch(findAll(spec))
     }
