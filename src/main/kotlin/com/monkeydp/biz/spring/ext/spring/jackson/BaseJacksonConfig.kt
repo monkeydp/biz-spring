@@ -2,6 +2,8 @@ package com.monkeydp.biz.spring.ext.spring.jackson
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
@@ -33,6 +35,7 @@ abstract class BaseJacksonConfig : InitializingBean {
                     .registerKotlinModule()
                     .registerModule(Hibernate5Module())
                     .setSerializationInclusion(NON_NULL)
+                    .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     @Bean
     open fun mappingJackson2HttpMessageConverter(objectMapper: ObjectMapper) =
