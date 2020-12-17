@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.monkeydp.biz"
-version = "1.0.6-SNAPSHOT"
+version = "1.0.6.RELEASE"
 java.sourceCompatibility = VERSION_1_8
 java.targetCompatibility = VERSION_1_8
 
@@ -17,7 +17,7 @@ val springVersion = "5.2.6.RELEASE"
 val springBootVersion = "2.2.7.RELEASE"
 
 dependencies {
-    api("com.monkeydp:tools:1.1.6-SNAPSHOT")
+    api("com.monkeydp:tools:1.1.6.RELEASE")
 
     implementation("org.springframework:spring-aspects:$springVersion")
     implementation("org.springframework:spring-messaging:$springVersion")
