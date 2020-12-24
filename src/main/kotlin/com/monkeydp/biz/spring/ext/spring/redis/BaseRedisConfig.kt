@@ -1,6 +1,7 @@
 package com.monkeydp.biz.spring.ext.spring.redis
 
-import com.monkeydp.tools.global.objectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
@@ -15,7 +16,7 @@ import java.io.Serializable
  */
 abstract class BaseRedisConfig {
     @Bean
-    open fun redisTemplate(factory: RedisConnectionFactory) =
+    open fun redisTemplate(factory: RedisConnectionFactory, objectMapper: ObjectMapper) =
             RedisTemplate<String, Serializable>()
                     .apply {
                         setConnectionFactory(factory)
