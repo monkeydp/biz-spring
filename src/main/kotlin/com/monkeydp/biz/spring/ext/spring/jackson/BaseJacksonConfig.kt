@@ -31,7 +31,6 @@ abstract class BaseJacksonConfig : InitializingBean {
     private var builder: Jackson2ObjectMapperBuilder by Delegates.singleton()
 
     @Bean
-    @Primary
     open fun objectMapper(): ObjectMapper =
             builder.build<ObjectMapper>()
                     .registerKotlinModule()
