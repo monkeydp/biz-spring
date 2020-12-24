@@ -16,6 +16,7 @@ import org.kodein.di.generic.singleton
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import kotlin.properties.Delegates
@@ -30,6 +31,7 @@ abstract class BaseJacksonConfig : InitializingBean {
     private var builder: Jackson2ObjectMapperBuilder by Delegates.singleton()
 
     @Bean
+    @Primary
     open fun objectMapper(): ObjectMapper =
             builder.build<ObjectMapper>()
                     .registerKotlinModule()
