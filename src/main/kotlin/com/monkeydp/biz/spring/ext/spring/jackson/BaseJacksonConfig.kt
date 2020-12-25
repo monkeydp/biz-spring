@@ -1,13 +1,9 @@
 package com.monkeydp.biz.spring.ext.spring.jackson
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.monkeydp.tools.config.ToolsKodeinModuleContainer
 import com.monkeydp.tools.ext.kotlin.singleton
@@ -16,7 +12,6 @@ import org.kodein.di.generic.singleton
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import kotlin.properties.Delegates
@@ -37,6 +32,9 @@ abstract class BaseJacksonConfig : InitializingBean {
                     .registerModule(Hibernate5Module())
                     .setSerializationInclusion(NON_NULL)
                     .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .config()
+
+    protected open fun ObjectMapper.config() = this
 
     @Bean
     open fun mappingJackson2HttpMessageConverter(objectMapper: ObjectMapper) =
