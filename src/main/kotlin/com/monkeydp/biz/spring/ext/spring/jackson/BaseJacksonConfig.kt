@@ -32,9 +32,11 @@ abstract class BaseJacksonConfig : InitializingBean {
                     .registerModule(Hibernate5Module())
                     .setSerializationInclusion(NON_NULL)
                     .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .config()
+                    .apply { config() }
 
-    protected open fun ObjectMapper.config() = this
+    protected open fun ObjectMapper.config(){
+        // empty
+    }
 
     @Bean
     open fun mappingJackson2HttpMessageConverter(objectMapper: ObjectMapper) =
