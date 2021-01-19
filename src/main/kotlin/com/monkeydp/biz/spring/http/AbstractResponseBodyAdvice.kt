@@ -21,6 +21,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
+import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 import kotlin.properties.Delegates
 
@@ -43,24 +44,28 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
 
     override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? =
-            if (body is Result) body
-            else JsonSuccessResult(data = body, returnType = returnType)
-                    .run {
-                        val cfg = request.respDataCfg
-                        if (body is String) toJson()
-                        else toObjectNode()
-                                .assignColumns()
-                                .let {
-                                    if (cfg.flatten) {
-                                        it.flattenData()
-                                    } else it
-                                }.beforeRemoveAllKeys(this, cfg)
-                                .let {
-                                    if (cfg.removeAllKeys)
-                                        it.removeAllKeys()
-                                    else it
-                                }
-                    }
+            when (body) {
+                is Result -> body
+                body is Serializable ->
+                    JsonSuccessResult(data = body, returnType = returnType)
+                            .run {
+                                val cfg = request.respDataCfg
+                                if (body is String) toJson()
+                                else toObjectNode()
+                                        .assignColumns()
+                                        .let {
+                                            if (cfg.flatten) {
+                                                it.flattenData()
+                                            } else it
+                                        }.beforeRemoveAllKeys(this, cfg)
+                                        .let {
+                                            if (cfg.removeAllKeys)
+                                                it.removeAllKeys()
+                                            else it
+                                        }
+                            }
+                else -> body
+            }
 
     protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, cfg: ResponseDataConfig): ObjectNode = this
 
