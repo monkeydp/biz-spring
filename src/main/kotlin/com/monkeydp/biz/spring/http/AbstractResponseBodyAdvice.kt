@@ -22,7 +22,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 import kotlin.properties.Delegates
 
@@ -47,7 +46,7 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
     override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? =
             when (body) {
                 is Result, is ResponseEntity<*> -> body
-                body is Serializable ->
+                else ->
                     JsonSuccessResult(data = body, returnType = returnType)
                             .run {
                                 val cfg = request.respDataCfg
@@ -65,7 +64,6 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
                                             else it
                                         }
                             }
-                else -> body
             }
 
     protected open fun ObjectNode.beforeRemoveAllKeys(result: Result, cfg: ResponseDataConfig): ObjectNode = this
