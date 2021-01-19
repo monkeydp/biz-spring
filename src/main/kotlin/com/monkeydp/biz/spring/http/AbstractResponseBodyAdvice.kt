@@ -12,6 +12,7 @@ import com.monkeydp.tools.ext.jackson.toJson
 import com.monkeydp.tools.ext.kotlin.singleton
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.MethodParameter
+import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
@@ -45,7 +46,7 @@ abstract class AbstractResponseBodyAdvice : ResponseBodyAdvice<Any> {
 
     override fun beforeBodyWrite(body: Any?, returnType: MethodParameter, selectedContentType: MediaType, selectedConverterType: Class<out HttpMessageConverter<*>>, request: ServerHttpRequest, response: ServerHttpResponse): Any? =
             when (body) {
-                is Result, is ResponseEntity<*> -> body
+                is Result, is ResponseEntity<*>, is Resource -> body
                 else ->
                     JsonSuccessResult(data = body, returnType = returnType)
                             .run {
