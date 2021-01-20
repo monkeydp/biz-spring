@@ -3,6 +3,7 @@ package com.monkeydp.biz.spring.crud
 import au.com.console.jpaspecificationdsl.where
 import com.monkeydp.biz.spring.ex.BizEx
 import com.monkeydp.biz.spring.result.ResultInfo
+import com.monkeydp.tools.ext.kotlin.getFieldValue
 import com.monkeydp.tools.ext.kotlin.singleton
 import com.monkeydp.tools.util.TypeUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,9 +21,40 @@ import kotlin.reflect.KClass
 
 interface CrudService<E, ID> {
 
-    fun save(entity: E): E
+    fun E.getId(): ID =
+            getFieldValue("id") { forceAccess = true }
 
-    fun saveAll(entities: Iterable<E>): List<E>
+    fun create(
+            entity: E,
+            config: (CreateConfig<E>.() -> Unit)? = null,
+    ): E
+
+    fun createAll(
+            entities: Iterable<E>,
+            config: (CreateAllConfig<E>.() -> Unit)? = null,
+    ): List<E>
+
+
+    fun update(
+            entity: E,
+            config: (UpdateConfig<E>.() -> Unit)? = null,
+    ): E
+
+
+    fun updateAll(
+            entities: Iterable<E>,
+            config: (UpdateAllConfig<E>.() -> Unit)? = null,
+    ): List<E>
+
+    fun save(
+            entity: E,
+            config: (SaveConfig<E>.() -> Unit)? = null,
+    ): E
+
+    fun saveAll(
+            entities: Iterable<E>,
+            config: (SaveAllConfig<E>.() -> Unit)? = null,
+    ): List<E>
 
     fun find(spec: Specification<E>): E
 
@@ -44,6 +76,8 @@ interface CrudService<E, ID> {
 
     fun findAll(spec: Specification<E>, query: PagingQuery): Paging<E>
 
+    fun findAllById(ids: Iterable<ID>): List<E>
+
     fun first(query: FirstQuery = FirstQuery()): E
 
     fun first(spec: Specification<E>, query: FirstQuery = FirstQuery()): E
@@ -63,11 +97,11 @@ interface CrudService<E, ID> {
     /**
      * 不是批量操作
      */
-    fun deleteAll(entities: List<E>)
+    fun deleteAll(entities: Iterable<E>)
 
     fun deleteAll(spec: Specification<E>)
 
-    fun deleteInBatch(entities: List<E>)
+    fun deleteInBatch(entities: Iterable<E>)
 
     fun deleteInBatch(spec: Specification<E>)
 
@@ -75,13 +109,37 @@ interface CrudService<E, ID> {
 
     fun count(spec: Specification<E>): Long
 
-    fun has(spec: Specification<E>): Boolean
+    fun exist(spec: Specification<E>): Boolean
 
-    fun has(spec: () -> Specification<E>): Boolean
+    fun exist(spec: () -> Specification<E>): Boolean
 
-    fun hasNo(spec: Specification<E>): Boolean
+    fun existById(id: ID): Boolean
 
-    fun hasNo(spec: () -> Specification<E>): Boolean
+    fun existById(ids: Iterable<ID>): Boolean
+
+    fun checkExist(spec: Specification<E>)
+
+    fun checkExist(spec: () -> Specification<E>)
+
+    fun checkExistById(id: ID)
+
+    fun checkExistById(ids: Iterable<ID>)
+
+    fun existNo(spec: Specification<E>): Boolean
+
+    fun existNo(spec: () -> Specification<E>): Boolean
+
+    fun existNoById(id: ID): Boolean
+
+    fun existNoById(ids: Iterable<ID>): Boolean
+
+    fun checkExistNo(spec: Specification<E>)
+
+    fun checkExistNo(spec: () -> Specification<E>)
+
+    fun checkExistNoById(id: ID)
+
+    fun checkExistNoById(ids: Iterable<ID>)
 }
 
 abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : CrudService<E, ID> {
@@ -91,13 +149,59 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
 
     private val entityClass: KClass<E> = TypeUtil.getGenericType<Class<E>>(this).kotlin
 
-    override fun save(entity: E): E = repo.save(entity)
+    @Transactional
+    override fun create(entity: E, config: ((CreateConfig<E>) -> Unit)?) =
+            CreateConfig(config).run {
+                if (enableCheckExistNo)
+                    checkExistNoById(entity.getId())
+                entity.checkDuplicate()
+                repo.save(entity)
+            }
 
-    override fun saveAll(entities: Iterable<E>) = repo.saveAll(entities)
+    @Transactional
+    override fun createAll(entities: Iterable<E>, config: (CreateAllConfig<E>.() -> Unit)?) =
+            CreateAllConfig(config).run {
+                if (enableCheckExistNo)
+                    checkExistNoById(entities.map { it.getId() })
+                entities.checkDuplicate()
+                repo.saveAll(entities)
+            }
+
+    @Transactional
+    override fun update(entity: E, config: (UpdateConfig<E>.() -> Unit)?) =
+            UpdateConfig(config).run {
+                if (enableCheckExist)
+                    checkExistById(entity.getId())
+                entity.checkDuplicate()
+                repo.save(entity)
+            }
+
+    @Transactional
+    override fun updateAll(entities: Iterable<E>, config: (UpdateAllConfig<E>.() -> Unit)?): List<E> =
+            UpdateAllConfig(config).run {
+                if (enableCheckExist)
+                    checkExistById(entities.map { it.getId() })
+                entities.checkDuplicate()
+                repo.saveAll(entities)
+            }
+
+    @Transactional
+    override fun save(entity: E, config: (SaveConfig<E>.() -> Unit)?): E =
+            SaveConfig(config).run {
+                checkDuplicate(entity)
+                repo.save(entity)
+            }
+
+    @Transactional
+    override fun saveAll(entities: Iterable<E>, config: (SaveAllConfig<E>.() -> Unit)?) =
+            SaveAllConfig(config).run {
+                checkDuplicate(entities)
+                repo.saveAll(entities)
+            }
 
     override fun find(spec: Specification<E>): E =
             repo.findOne(spec)
-                    .orElseThrow { throwDataNotFoundEx() }
+                    .orElseThrow { throwDataNotExistEx() }
 
     override fun find(makePredicate: CriteriaBuilder.(Root<E>) -> Predicate) =
             find(where(makePredicate))
@@ -111,7 +215,7 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
 
     override fun findById(id: ID): E =
             repo.findById(id)
-                    .orElseThrow { throwDataNotFoundEx() }
+                    .orElseThrow { throwDataNotExistEx() }
 
     override fun findByIdOrNull(id: ID?): E? =
             if (id == null) null
@@ -132,9 +236,12 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             repo.findAll(spec, query.pageable)
                     .run(::Paging)
 
+    override fun findAllById(ids: Iterable<ID>) =
+            repo.findAllById(ids)
+
     override fun first(query: FirstQuery): E {
         val entity = firstOrNull(query)
-        if (entity == null) throwDataNotFoundEx()
+        if (entity == null) throwDataNotExistEx()
         return entity
     }
 
@@ -156,14 +263,14 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
         try {
             delete(findById(id))
         } catch (e: EmptyResultDataAccessException) {
-            throw buildDataNotFoundEx(entityClass)
+            throw buildDataNotExistFoundEx(entityClass)
         }
     }
 
     @Transactional
     override fun delete(spec: Specification<E>) {
         val entity = findOrNull(spec)
-        entity ?: throwDataNotFoundEx()
+        entity ?: throwDataNotExistEx()
         delete(entity)
     }
 
@@ -174,7 +281,7 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             }
 
     @Transactional
-    override fun deleteAll(entities: List<E>) {
+    override fun deleteAll(entities: Iterable<E>) {
         repo.deleteAll(entities)
     }
 
@@ -183,7 +290,7 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             deleteAll(findAll(spec))
 
     @Transactional
-    override fun deleteInBatch(entities: List<E>) {
+    override fun deleteInBatch(entities: Iterable<E>) {
         repo.deleteInBatch(entities)
     }
 
@@ -198,26 +305,84 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
     override fun count(spec: Specification<E>) =
             repo.count(spec)
 
-    override fun has(spec: Specification<E>) =
-            findAll(spec).isNotEmpty()
+    override fun exist(spec: Specification<E>) =
+            firstOrNull(spec) != null
 
-    override fun has(spec: () -> Specification<E>) =
-            has(spec())
+    override fun exist(spec: () -> Specification<E>) =
+            exist(spec())
 
-    override fun hasNo(spec: Specification<E>) =
-            !has(spec)
+    override fun existById(id: ID) =
+            repo.existsById(id)
 
-    override fun hasNo(spec: () -> Specification<E>) =
-            !has(spec)
+    override fun existById(ids: Iterable<ID>) =
+            findAllById(ids).size == ids.toCollection(mutableListOf()).size
 
-    private fun throwDataNotFoundEx(): Nothing {
-        throw buildDataNotFoundEx()
+    override fun checkExist(spec: Specification<E>) {
+        if (existNo(spec))
+            throwDataNotExistEx()
     }
 
-    abstract fun buildDataNotFoundEx(notFoundKClass: KClass<*> = entityClass): DataNotFoundEx
+    override fun checkExist(spec: () -> Specification<E>) {
+        checkExist(spec())
+    }
+
+    override fun checkExistById(id: ID) {
+        if (existNoById(id))
+            throwDataNotExistEx()
+    }
+
+    override fun checkExistById(ids: Iterable<ID>) {
+        if (existNoById(ids))
+            throwDataNotExistEx()
+    }
+
+    override fun existNo(spec: Specification<E>) =
+            !exist(spec)
+
+    override fun existNo(spec: () -> Specification<E>) =
+            !exist(spec)
+
+    override fun existNoById(id: ID) =
+            !existById(id)
+
+    override fun existNoById(ids: Iterable<ID>) =
+            findAllById(ids).isEmpty()
+
+    override fun checkExistNo(spec: Specification<E>) {
+        if (exist(spec))
+            throwDataAlreadyExistEx()
+    }
+
+    override fun checkExistNo(spec: () -> Specification<E>) {
+        checkExistNo(spec())
+    }
+
+    override fun checkExistNoById(id: ID) {
+        if (existById(id))
+            throwDataAlreadyExistEx()
+    }
+
+    override fun checkExistNoById(ids: Iterable<ID>) {
+        if (existById(ids))
+            throwDataAlreadyExistEx()
+    }
+
+    private fun throwDataAlreadyExistEx(): Nothing {
+        throw buildDataAlreadyExistEx()
+    }
+
+    abstract fun buildDataAlreadyExistEx(kClass: KClass<*> = entityClass): DataAlreadyExistEx
+
+    private fun throwDataNotExistEx(): Nothing {
+        throw buildDataNotExistFoundEx()
+    }
+
+    abstract fun buildDataNotExistFoundEx(kClass: KClass<*> = entityClass): DataNotExistEx
 }
 
-abstract class DataNotFoundEx(info: ResultInfo, cause: Throwable? = null) : BizEx(info, cause)
+abstract class DataAlreadyExistEx(info: ResultInfo, cause: Throwable? = null) : BizEx(info, cause)
+
+abstract class DataNotExistEx(info: ResultInfo, cause: Throwable? = null) : BizEx(info, cause)
 
 @NoRepositoryBean
 interface CrudRepo<E, ID> : JpaRepository<E, ID>, JpaSpecificationExecutor<E>
