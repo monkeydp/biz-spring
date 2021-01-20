@@ -59,5 +59,5 @@ class UniqueError(
             )
 }
 
-fun Collection<ValidError>.groupByIllegalValue() =
-        groupBy { it.illegalValue }
+fun Collection<ValidError>.groupByPropName() =
+        groupBy { it.propName }
