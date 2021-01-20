@@ -14,10 +14,9 @@ val Date.cronExp: String
         SimpleDateFormat("ss mm HH dd MM ?")
                 .format(this)
 
-fun TaskScheduler.scheduleCronTask(runFun: () -> Unit, cronExp: String) {
-    schedule(object : Runnable {
-        override fun run() {
-            runFun()
-        }
-    }, CronTrigger(cronExp))
-}
+fun TaskScheduler.scheduleCronTask(runFun: () -> Unit, cronExp: String) =
+        schedule(object : Runnable {
+            override fun run() {
+                runFun()
+            }
+        }, CronTrigger(cronExp))
