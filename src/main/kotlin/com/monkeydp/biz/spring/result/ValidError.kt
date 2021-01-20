@@ -35,7 +35,7 @@ interface ValidError {
                             objName = objectName,
                             propName = field,
                             cstrName = code ?: "<unknown>",
-                            illegalValue = rejectedValue?.toString() ?: "<unknown>"
+                            illegalValue = rejectedValue?.toString() ?: "null"
                     )
                 }
     }
