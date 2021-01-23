@@ -94,6 +94,8 @@ interface CrudService<E, ID> {
 
     fun deleteMaybeNull(spec: Specification<E>): E?
 
+    fun deleteByIdMaybeNull(id: ID): E?
+
     /**
      * 不是批量操作
      */
@@ -280,6 +282,11 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
                 run(::delete)
             }
 
+    override fun deleteByIdMaybeNull(id: ID): E? =
+            findByIdOrNull(id)?.apply {
+                run(::delete)
+            }
+    
     @Transactional
     override fun deleteAll(entities: Iterable<E>) {
         repo.deleteAll(entities)
