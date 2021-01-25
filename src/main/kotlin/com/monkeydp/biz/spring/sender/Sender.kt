@@ -3,7 +3,7 @@ package com.monkeydp.biz.spring.sender
 import com.monkeydp.biz.spring.regex.isEmail
 import com.monkeydp.biz.spring.regex.isMobile
 import com.monkeydp.tools.exception.ierror
-import com.monkeydp.tools.json.Jsonable
+import com.monkeydp.tools.module.json.Jsonable
 
 /**
  * @author iPotato-Work
