@@ -16,4 +16,4 @@ fun TaskScheduler.scheduleCronTask(cronExp: CharSequence, task: () -> Unit) =
         }, CronTrigger(cronExp.toString()))
 
 fun TaskScheduler.scheduleCronTask(cron: Cron, task: () -> Unit) =
-        scheduleCronTask(cron.expression, task)
+        scheduleCronTask(cron.exp, task)
