@@ -1,10 +1,12 @@
 package com.monkeydp.biz.spring.crud
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.monkeydp.biz.spring.crud.ListQuery.Companion.DEFAULT_SORT
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_CURRENT_PAGE
 import com.monkeydp.biz.spring.crud.PagingQuery.Companion.DEFAULT_PAGE_SIZE
+import com.monkeydp.biz.spring.crud.PagingQueryForm.ToPagingQueryOptions
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 
 /**
@@ -18,7 +20,18 @@ interface PagingQueryForm {
 
     @get:ApiModelProperty("每页记录数", example = DEFAULT_PAGE_SIZE.toString())
     val pageSize: Int
-    fun toPagingQuery(): PagingQuery
+    fun toPagingQuery(options: (ToPagingQueryOptions.() -> Unit)? = null): PagingQuery
+
+    class ToPagingQueryOptions(
+            var sort: Sort = DEFAULT_SORT
+    ) {
+        companion object {
+            operator fun invoke(init: (ToPagingQueryOptions.() -> Unit)? = null) =
+                    ToPagingQueryOptions().apply {
+                        init?.invoke(this)
+                    }
+        }
+    }
 
     companion object {
         operator fun invoke(
@@ -37,11 +50,13 @@ abstract class BasePqForm(
         @get:ApiModelProperty("每页记录数", example = DEFAULT_PAGE_SIZE.toString())
         override val pageSize: Int = DEFAULT_PAGE_SIZE
 ) : PagingQueryForm {
-    override fun toPagingQuery() =
-            PagingQuery(
-                    currentPage = currentPage,
-                    pageSize = pageSize
-            )
+    override fun toPagingQuery(options: (ToPagingQueryOptions.() -> Unit)?) =
+            PagingQuery {
+                currentPage = this@BasePqForm.currentPage
+                pageSize = this@BasePqForm.pageSize
+                val opts = ToPagingQueryOptions(options)
+                sort = opts.sort
+            }
 }
 
 class PqForm(

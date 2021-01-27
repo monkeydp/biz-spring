@@ -3,6 +3,7 @@ package com.monkeydp.biz.spring.entity
 import com.monkeydp.biz.spring.crud.HasCreatedAt
 import com.monkeydp.biz.spring.crud.HasUpdatedAt
 import com.monkeydp.tools.ext.jackson.toJson
+import com.monkeydp.tools.ext.kotlin.camelToSnake
 import com.monkeydp.tools.ext.kotlin.toMemberPropValues
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -12,10 +13,14 @@ import java.io.Serializable
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.MappedSuperclass
+import kotlin.reflect.KClass
 
 interface EntityAware : HasCreatedAt, HasUpdatedAt
 
 interface Entity : EntityAware
+
+val <E : Entity> KClass<E>.tableName
+    get() = simpleName!!.camelToSnake().toLowerCase()
 
 @MappedSuperclass
 abstract class AbstractEntity : Entity, Serializable {

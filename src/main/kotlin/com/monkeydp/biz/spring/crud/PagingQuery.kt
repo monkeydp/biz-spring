@@ -12,7 +12,7 @@ import javax.validation.constraints.Positive
 import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.reflect.KClass
 
-@JsonDeserialize(`as` = StdPagingQuery::class)
+@JsonDeserialize(`as` = PagingQueryImpl::class)
 interface PagingQuery : ListQuery {
     val currentPage: Int
     val pageSize: Int
@@ -22,16 +22,30 @@ interface PagingQuery : ListQuery {
         const val DEFAULT_CURRENT_PAGE = 1
         const val DEFAULT_PAGE_SIZE = 10
 
-        operator fun invoke(
-                currentPage: Int = DEFAULT_CURRENT_PAGE,
-                pageSize: Int = DEFAULT_PAGE_SIZE,
-                sort: Sort = DEFAULT_SORT
-        ): PagingQuery =
-                StdPagingQuery(
-                        currentPage = currentPage,
-                        pageSize = pageSize,
-                        sort = sort
-                )
+        operator fun invoke(options: (Options.() -> Unit)? = null) =
+                PagingQuery(Options(options))
+
+        operator fun invoke(options: Options): PagingQuery =
+                options.run {
+                    PagingQueryImpl(
+                            currentPage = currentPage,
+                            pageSize = pageSize,
+                            sort = sort
+                    )
+                }
+    }
+
+    class Options(
+            var currentPage: Int = DEFAULT_CURRENT_PAGE,
+            var pageSize: Int = DEFAULT_PAGE_SIZE,
+            var sort: Sort = DEFAULT_SORT
+    ) {
+        companion object {
+            operator fun invoke(init: (Options.() -> Unit)? = null) =
+                    Options().apply {
+                        init?.invoke(this)
+                    }
+        }
     }
 }
 
@@ -49,7 +63,7 @@ abstract class BasePagingQuery(
         get() = PageRequest.of(currentPage - 1, pageSize, sort)
 }
 
-private class StdPagingQuery(
+private class PagingQueryImpl(
         currentPage: Int,
         pageSize: Int,
         sort: Sort
