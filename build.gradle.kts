@@ -47,10 +47,16 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = VERSION_1_8.toString()
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.time.ExperimentalTime")
+            jvmTarget = VERSION_1_8.toString()
+        }
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = VERSION_1_8.toString()
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.time.ExperimentalTime")
+            jvmTarget = VERSION_1_8.toString()
+        }
     }
     test {
         useJUnitPlatform()
