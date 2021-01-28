@@ -1,7 +1,9 @@
 package com.monkeydp.biz.spring.ext.spring.scheduling
 
 import com.monkeydp.tools.ext.java.plus
+import com.monkeydp.tools.ext.kotlin.getFieldValue
 import org.springframework.scheduling.TriggerContext
+import org.springframework.scheduling.support.CronSequenceGenerator
 import org.springframework.scheduling.support.CronTrigger
 import java.util.*
 
@@ -14,12 +16,28 @@ class CronTriggerx(
         private val options: Options,
 ) : CronTrigger(expression) {
 
+    private val cronSequenceGenerator by lazy {
+        getFieldValue<CronSequenceGenerator>("sequenceGenerator") {
+            forceAccess = true
+        }
+    }
+
     constructor(expression: String, options: (Options.() -> Unit)? = null) :
             this(expression, Options(options))
 
     override fun nextExecutionTime(triggerContext: TriggerContext) =
             options.run {
-                super.nextExecutionTime(triggerContext).plus(timeunit, offsetTime)
+                var date = triggerContext.lastCompletionTime()
+                when {
+                    date == null -> date = Date()
+                    else -> {
+                        val scheduled = triggerContext.lastScheduledExecutionTime()
+                        if (scheduled != null && date.before(scheduled))
+                            date = scheduled
+                    }
+                }
+                date = date.plus(-offsetTime, timeunit)
+                cronSequenceGenerator.next(date).plus(offsetTime, timeunit)
             }
 
     class Options(
