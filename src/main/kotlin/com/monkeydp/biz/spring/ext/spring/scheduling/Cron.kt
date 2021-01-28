@@ -1,6 +1,5 @@
 package com.monkeydp.biz.spring.ext.spring.scheduling
 
-import com.monkeydp.tools.module.cron.Cron
 import org.springframework.scheduling.TaskScheduler
 
 /**
@@ -23,10 +22,3 @@ fun TaskScheduler.scheduleCronTask(
                 task()
             }
         }, trigger)
-
-fun TaskScheduler.scheduleCronTask(
-        cron: Cron,
-        options: (CronTriggerx.Options.() -> Unit)? = null,
-        task: () -> Unit,
-) =
-        scheduleCronTask(cron.exp, options, task)
