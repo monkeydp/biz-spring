@@ -12,11 +12,17 @@ fun TaskScheduler.scheduleCronTask(
         options: (CronTriggerx.Options.() -> Unit)? = null,
         task: () -> Unit,
 ) =
+        scheduleCronTask(CronTriggerx(cronExp.toString(), options), task)
+
+fun TaskScheduler.scheduleCronTask(
+        trigger: CronTriggerx,
+        task: () -> Unit,
+) =
         schedule(object : Runnable {
             override fun run() {
                 task()
             }
-        }, CronTriggerx(cronExp.toString(), options))
+        }, trigger)
 
 fun TaskScheduler.scheduleCronTask(
         cron: Cron,
