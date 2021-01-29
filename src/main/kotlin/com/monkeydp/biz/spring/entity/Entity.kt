@@ -5,13 +5,15 @@ import com.monkeydp.biz.spring.crud.HasUpdatedAt
 import com.monkeydp.tools.ext.jackson.toJson
 import com.monkeydp.tools.ext.kotlin.camelToSnake
 import com.monkeydp.tools.ext.kotlin.toMemberPropValues
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.collection.internal.PersistentBag
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
 import java.util.*
 import javax.persistence.Column
+import javax.persistence.EntityListeners
 import javax.persistence.MappedSuperclass
 import kotlin.reflect.KClass
 
@@ -23,17 +25,18 @@ val <E : Entity> KClass<E>.tableName
     get() = simpleName!!.camelToSnake().toLowerCase()
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener::class)
 abstract class AbstractEntity : Entity, Serializable {
 
     companion object {
         const val INVALID_ID = -1L
     }
 
-    @field:CreationTimestamp
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     override lateinit var createdAt: Date
 
-    @field:UpdateTimestamp
+    @LastModifiedDate
     @Column(nullable = false)
     override lateinit var updatedAt: Date
 }
