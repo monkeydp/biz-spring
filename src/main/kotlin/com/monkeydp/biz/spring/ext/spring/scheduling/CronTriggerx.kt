@@ -1,8 +1,9 @@
 package com.monkeydp.biz.spring.ext.spring.scheduling
 
 import com.monkeydp.biz.spring.ext.spring.scheduling.CronTriggerx.Options
+import com.monkeydp.biz.spring.ext.spring.scheduling.Times.ONCE
+import com.monkeydp.biz.spring.ext.spring.scheduling.Times.REPEATEDLY
 import com.monkeydp.tools.ext.java.plus
-import com.monkeydp.tools.ext.kotlin.getFieldValue
 import org.springframework.scheduling.Trigger
 import org.springframework.scheduling.TriggerContext
 import org.springframework.scheduling.support.CronSequenceGenerator
@@ -32,6 +33,8 @@ interface CronTriggerx : Trigger {
             var offsetTime: Int = 0,
 
             var timeunit: Int = Calendar.SECOND,
+
+            var times: Times = REPEATEDLY,
     ) {
         companion object {
             operator fun invoke(init: (Options.() -> Unit)? = null) =
@@ -44,17 +47,14 @@ interface CronTriggerx : Trigger {
 private class CronTriggerxImpl(
         expression: String,
         private val options: Options,
-) : CronTriggerx, CronTrigger(expression) {
+) : CronTriggerx, Trigger by CronTrigger(expression) {
 
-    private val cronSequenceGenerator by lazy {
-        getFieldValue<CronSequenceGenerator>("sequenceGenerator") {
-            forceAccess = true
-        }
-    }
+    private val sequenceGenerator = CronSequenceGenerator(expression)
 
     override fun nextExecutionTime(triggerContext: TriggerContext) =
             options.run {
                 var date = triggerContext.lastCompletionTime()
+                if (times == ONCE && date != null) return@run null
                 when {
                     date == null -> date = Date()
                     else -> {
@@ -64,7 +64,10 @@ private class CronTriggerxImpl(
                     }
                 }
                 date = date.plus(-offsetTime, timeunit)
-                cronSequenceGenerator.next(date).plus(offsetTime, timeunit)
+                sequenceGenerator.next(date).plus(offsetTime, timeunit)
             }
 }
 
+enum class Times {
+    ONCE, REPEATEDLY
+}
