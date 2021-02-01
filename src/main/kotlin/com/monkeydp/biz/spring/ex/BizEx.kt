@@ -12,7 +12,7 @@ abstract class BizEx(
     }
 
     var logLevel = DEFAULT_LOG_LEVEL
-    protected val args = mutableMapOf<String, Any>()
+    protected val args = mutableMapOf<String, Any?>()
 
     override val message: String
         get() = info.buildMessage(args)
