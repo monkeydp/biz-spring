@@ -49,7 +49,7 @@ class JsonSuccessResultImpl<T>(
             objectMapper.getSerializationConfig()
                     .withView(null)
                     .let(objectMapper::setConfig)
-            return objectMapper.convertValue(this)
+            return objectMapper.valueToTree(this)
         }
 
         require(jsonView.value.size == 1)
