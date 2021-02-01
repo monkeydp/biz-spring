@@ -26,34 +26,34 @@ interface CrudService<E, ID> {
 
     fun create(
             entity: E,
-            config: (CreateConfig<E>.() -> Unit)? = null,
+            config: (CreateOptions<E>.() -> Unit)? = null,
     ): E
 
     fun createAll(
             entities: Iterable<E>,
-            config: (CreateAllConfig<E>.() -> Unit)? = null,
+            config: (CreateAllOptions<E>.() -> Unit)? = null,
     ): List<E>
 
 
     fun update(
             entity: E,
-            config: (UpdateConfig<E>.() -> Unit)? = null,
+            config: (UpdateOptions<E>.() -> Unit)? = null,
     ): E
 
 
     fun updateAll(
             entities: Iterable<E>,
-            config: (UpdateAllConfig<E>.() -> Unit)? = null,
+            config: (UpdateAllOptions<E>.() -> Unit)? = null,
     ): List<E>
 
     fun save(
             entity: E,
-            config: (SaveConfig<E>.() -> Unit)? = null,
+            options: (SaveOptions<E>.() -> Unit)? = null,
     ): E
 
     fun saveAll(
             entities: Iterable<E>,
-            config: (SaveAllConfig<E>.() -> Unit)? = null,
+            options: (SaveAllOptions<E>.() -> Unit)? = null,
     ): List<E>
 
     fun find(spec: Specification<E>): E
@@ -152,8 +152,8 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
     private val entityClass: KClass<E> = TypeUtil.getGenericType<Class<E>>(this).kotlin
 
     @Transactional
-    override fun create(entity: E, config: ((CreateConfig<E>) -> Unit)?) =
-            CreateConfig(config).run {
+    override open fun create(entity: E, config: ((CreateOptions<E>) -> Unit)?) =
+            CreateOptions(config).run {
                 if (enableCheckExistNo)
                     checkExistNoById(entity.getId())
                 entity.checkDuplicate()
@@ -161,8 +161,8 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             }
 
     @Transactional
-    override fun createAll(entities: Iterable<E>, config: (CreateAllConfig<E>.() -> Unit)?) =
-            CreateAllConfig(config).run {
+    override fun createAll(entities: Iterable<E>, config: (CreateAllOptions<E>.() -> Unit)?) =
+            CreateAllOptions(config).run {
                 if (enableCheckExistNo)
                     checkExistNoById(entities.map { it.getId() })
                 entities.checkDuplicate()
@@ -170,8 +170,8 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             }
 
     @Transactional
-    override fun update(entity: E, config: (UpdateConfig<E>.() -> Unit)?) =
-            UpdateConfig(config).run {
+    override fun update(entity: E, config: (UpdateOptions<E>.() -> Unit)?) =
+            UpdateOptions(config).run {
                 if (enableCheckExist)
                     checkExistById(entity.getId())
                 entity.checkDuplicate()
@@ -179,8 +179,8 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             }
 
     @Transactional
-    override fun updateAll(entities: Iterable<E>, config: (UpdateAllConfig<E>.() -> Unit)?): List<E> =
-            UpdateAllConfig(config).run {
+    override fun updateAll(entities: Iterable<E>, config: (UpdateAllOptions<E>.() -> Unit)?): List<E> =
+            UpdateAllOptions(config).run {
                 if (enableCheckExist)
                     checkExistById(entities.map { it.getId() })
                 entities.checkDuplicate()
@@ -188,15 +188,15 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             }
 
     @Transactional
-    override fun save(entity: E, config: (SaveConfig<E>.() -> Unit)?): E =
-            SaveConfig(config).run {
+    override fun save(entity: E, options: (SaveOptions<E>.() -> Unit)?): E =
+            SaveOptions(options).run {
                 checkDuplicate(entity)
                 repo.save(entity)
             }
 
     @Transactional
-    override fun saveAll(entities: Iterable<E>, config: (SaveAllConfig<E>.() -> Unit)?) =
-            SaveAllConfig(config).run {
+    override fun saveAll(entities: Iterable<E>, options: (SaveAllOptions<E>.() -> Unit)?) =
+            SaveAllOptions(options).run {
                 checkDuplicate(entities)
                 repo.saveAll(entities)
             }
@@ -286,7 +286,7 @@ abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : Cru
             findByIdOrNull(id)?.apply {
                 run(::delete)
             }
-    
+
     @Transactional
     override fun deleteAll(entities: Iterable<E>) {
         repo.deleteAll(entities)
