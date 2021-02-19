@@ -144,15 +144,14 @@ interface CrudService<E, ID> {
     fun checkExistNoById(ids: Iterable<ID>)
 }
 
-abstract class AbstractCrudService<E : Any, ID : Any, R : CrudRepo<E, ID>> : CrudService<E, ID> {
+abstract class AbstractCrudService<E : Any, ID : Any> : CrudService<E, ID> {
 
-    @set:Autowired
-    protected var repo: R by Delegates.singleton()
+    protected abstract val repo: CrudRepo<E, ID>
 
     private val entityClass: KClass<E> = TypeUtil.getGenericType<Class<E>>(this).kotlin
 
     @Transactional
-    override open fun create(entity: E, config: ((CreateOptions<E>) -> Unit)?) =
+    open override fun create(entity: E, config: ((CreateOptions<E>) -> Unit)?) =
             CreateOptions(config).run {
                 if (enableCheckExistNo)
                     checkExistNoById(entity.getId())
